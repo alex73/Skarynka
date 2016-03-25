@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <settings>
+        <!-- You can define custom locale for UI -->
+        <!--param id="locale_language">be</param-->
+
+        <!-- Directory with all books files -->
+        <param host="scan" id="book-dir">/scan/books</param>
+        <param host="scan" id="control-dir">/scan/control</param>
+
+        <!-- Camera's vendor:product USB IDs. Will not be checked if not defined. Need to declare for be sure that camera 
+            settings defined for specific cameras. -->
+        <param id="cameras-usbid">04a9:31ef</param>
+        <!-- UI props for specified cameras. Image size must be defined at least. -->
+        <param id="cameras-settings">camera_04a9_31ef.properties</param>
+
+        <!-- If focus distance is not defined, auto distance will be used -->
+        <!-- param id="cameras-manual-focus-distance">700</param-->
+
+        <!-- Default dpi for each scale for 100% -->
+        <param id="dpi.1">176</param>
+        <param id="dpi.2">203</param>
+        <param id="dpi.3">250</param>
+        <param id="dpi.4">308</param>
+        <param id="dpi.5">377</param>
+        <param id="dpi.6">442</param>
+        <param id="dpi.7">539</param>
+
+        <!-- id="hidscan-usbInterfaceProtocol" can be defined for complex device for distinguish interfaces -->
+        <!-- Mouse pedal : use usual(second) mouse as pedal. User can click any button for scan. -->
+        <!--param id="hidscan-usbid">093a:2510</param>
+        <param id="hidscan-button.1.0.0.0">VK_F1</param-->
+        <!-- Foot pedal : use cheap foot pedal like http://www.amazon.com/USB-Foot-Switch-Keyboard-Pedal/dp/B008MU0TBU -->
+        <!-- param id="hidscan-usbid">0c45:7403</param>
+        <param id="hidscan-usbInterfaceProtocol">1</param>
+        <param id="hidscan-button.1.0.0.5.0.0.0.0">VK_F1</param-->
+        <!-- Keys that will be used for initiate scan. Foot pedal produces usual 'b' char under Windows. Use 'VK_F1' if you defined it above-->
+        <param id="hidscan-keys">VK_B</param>
+
+        <!-- Paths to some software for conversion. They shoudn't contain spaces. -->
+        <param os="Linux" id="path_dcraw">bin/dcraw</param>
+        <param os="Windows" id="path_dcraw">dcraw</param>
+        <param id="path_convert">convert</param>
+        <param id="path_c44">c44</param>
+        <param id="path_djvm">djvm</param>
+        <param os="Linux" id="command_charset">UTF-8</param>
+        <param os="Windows" id="command_charset">Cp866</param>
+
+        <!-- Parameters for A495 -->
+        <param id="dcraw_params">-k 80 -g 1.3 4.5 -r 1.964870 1.001222 2.512568 1.000000</param>
+    </settings>
+
+    <!-- CameraBadPixles: allow to find bad pixels in cameras -->
+    <!-- Processing: allow to process images in background -->
+    <!-- ShowNonLocalBooks: allow to show non-local books -->
+    <!-- ProcessingControl: allow to control processing -->
+    <permissions host="main">
+        <allow id="CameraBadPixels" value="false" />
+        <allow id="ProcessingBooks" value="false" />
+        <allow id="ProcessingControls" value="false" />
+        <allow id="ShowNonLocalBooks" value="true" />
+        <allow id="BookControl" value="true" />
+    </permissions>
+    <permissions host="scan">
+        <allow id="CameraBadPixels" value="false" />
+        <allow id="ProcessingBooks" value="true" />
+        <allow id="ProcessingControls" value="true" />
+        <allow id="ShowNonLocalBooks" value="false" />
+        <allow id="BookControl" value="false" />
+    </permissions>
+    <permissions host="test">
+        <allow id="CameraBadPixels" value="false" />
+        <allow id="ProcessingBooks" value="true" />
+        <allow id="ProcessingControls" value="false" />
+        <allow id="ShowNonLocalBooks" value="true" />
+        <allow id="BookControl" value="true" />
+    </permissions>
+
+    <page-tags>
+        <!-- All possible tags for pages -->
+        <tag name="foredit" title="рэдагаваць" />
+        <!-- tag name="color" title="каляровая" /-->
+    </page-tags>
+
+    <process-commands>
+        <!-- All possible tags for pages -->
+        <command name="jpegoverview" title="Jpeg для тытульных старонак" />
+        <command name="edit" title="Рыхтаваць для рэдагаваньня" />
+        <command name="djvu" title="Канвэртаваць у DJVU" />
+        <command name="jp2" title="Канвэртаваць у JP2" />
+    </process-commands>
+</config>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Skarynka" basedir="." default="build">
+
+
+	<target name="clean">
+		<delete dir="build" />
+		<delete dir="dist" />
+	</target>
+
+	<target name="gen">
+		<exec executable="xjc">
+			<arg line="-no-header" />
+			<arg line="-d src" />
+			<arg line="-p org.alex73.skarynka.scan.xsd" />
+			<arg value="src/org/alex73/skarynka/scan/config.xsd" />
+		</exec>
+	</target>
+
+	<path id="libs.runtime">
+		<fileset dir="lib/">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<pathconvert property="libs.classpath" pathsep=" ">
+		<path refid="libs.runtime" />
+		<mapper>
+			<flattenmapper />
+		</mapper>
+	</pathconvert>
+
+	<target name="build" depends="clean">
+		<mkdir dir="build/classes" />
+		<javac destdir="build/classes" debug="true" encoding="UTF-8">
+			<src path="src" />
+			<classpath>
+				<fileset dir="lib" includes="**/*.jar" />
+			</classpath>
+		</javac>
+		<copy todir="build/classes">
+			<fileset dir="src" />
+		</copy>
+		<tstamp>
+			<format property="now" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+		<jar jarfile="build/Skarynka.jar" basedir="build/classes">
+			<manifest>
+				<attribute name="Main-Class" value="org.alex73.skarynka.scan.Scan2" />
+				<attribute name="Class-Path" value="${libs.classpath}" />
+				<attribute name="Build" value="${now}" />
+			</manifest>
+		</jar>
+		<zip destfile="build/Skarynka.zip" basedir="release/">
+			<zipfileset dir="lib/" prefix="lib/"/>
+			<zipfileset file="build/Skarynka.jar" prefix="lib/"/>
+		</zip>
+	</target>
+</project>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Config file schema -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="settings" />
+                <xs:element ref="permissions" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element ref="page-tags" />
+                <xs:element ref="process-commands" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="settings">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="param" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="param">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="host" type="xs:string" use="optional" />
+                    <xs:attribute name="os" type="OS" use="optional" />
+                    <xs:attribute name="id" type="xs:string" use="required" />
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="permissions">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="allow" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+            <xs:attribute name="host" type="xs:string" use="optional" />
+            <xs:attribute name="os" type="OS" use="optional" />
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="allow">
+        <xs:complexType>
+            <xs:attribute name="id" type="xs:string" use="required" />
+            <xs:attribute name="value" type="xs:boolean" use="required" />
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="page-tags">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tag" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="tag">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required" />
+            <xs:attribute name="title" type="xs:string" use="required" />
+        </xs:complexType>
+    </xs:element>
+     <xs:element name="process-commands">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="command" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="command">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required" />
+            <xs:attribute name="title" type="xs:string" use="required" />
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="OS">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Linux" />
+            <xs:enumeration value="Windows" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
