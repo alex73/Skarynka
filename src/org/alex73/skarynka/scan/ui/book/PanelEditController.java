@@ -142,7 +142,9 @@ public class PanelEditController implements ITabController {
         Set<String> cameras = new TreeSet<>();
         for (String page : book.listPages()) {
             Book2.PageInfo pi = book.getPageInfo(page);
-            cameras.add(pi.camera);
+            if (pi.camera != null) {
+                cameras.add(pi.camera);
+            }
         }
 
         for (String camera : cameras) {

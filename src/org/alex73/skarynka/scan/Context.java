@@ -161,7 +161,7 @@ public class Context {
     }
 
     public static class Perm {
-        public boolean CameraBadPixels, ProcessingBooks, ProcessingControls, ShowNonLocalBooks, BookControl;
+        public boolean CameraBadPixels, ProcessingBooks, ProcessingControls, ShowNonLocalBooks, BookControl, ShowDevices, ShowManualAdd;
     }
 
     public static class ScriptStorage {

@@ -52,6 +52,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         workMenu = new javax.swing.JMenu();
         processScan = new javax.swing.JMenuItem();
+        processAdd = new javax.swing.JMenuItem();
         closeBook = new javax.swing.JMenuItem();
         viewMenu = new javax.swing.JMenu();
         viewInc = new javax.swing.JMenuItem();
@@ -91,6 +92,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         processScan.setText(Messages.getString("MENU_BOOK_SCAN")); // NOI18N
         workMenu.add(processScan);
+
+        processAdd.setText(Messages.getString("MENU_BOOK_ADD")); // NOI18N
+        workMenu.add(processAdd);
 
         closeBook.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
         closeBook.setText(Messages.getString("MENU_BOOK_CLOSE")); // NOI18N
@@ -196,6 +200,7 @@ public class MainFrame extends javax.swing.JFrame {
     public javax.swing.JPanel jPanel2;
     public javax.swing.JPopupMenu.Separator jSeparator1;
     public javax.swing.JPopupMenu.Separator jSeparator2;
+    public javax.swing.JMenuItem processAdd;
     public javax.swing.JMenuItem processScan;
     public javax.swing.JTabbedPane tabs;
     public javax.swing.JMenuItem toolsPedal;

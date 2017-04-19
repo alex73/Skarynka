@@ -112,3 +112,46 @@ function bookexecute_jpegoverview() {
     cmd.fileRemove(book.pages[p]+'.jpeg');
   }
 }
+
+function exist_preview() {
+  return cmd.fileExist(page.previewPageFile);
+}
+function execute_preview() {
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} -scale 500x500 ${page.previewPageFile}');
+}
+function bookexist_preview() {
+  return true;
+}
+
+function exist_pdf() {
+  return cmd.fileExist('temp/'+page.number+'.jp2');
+}
+function execute_pdf() {
+  cmd.mkdir('temp');
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY} '+rotate(page)+' '+scale(book)+' -strip temp/${page.number}.tif');
+  cmd.exec('${settings.path_opj} -i temp/${page.number}.tif -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
+}
+function bookexist_pdf() {
+  return cmd.fileExist('../'+book.name+'.pdf');
+}
+function bookexecute_pdf() {
+  cmd.pdf('../'+book.name+'.pdf', 'temp/', 'jp2');
+  for(p in book.pages) {
+    cmd.fileRemove(book.pages[p]+'.jp2');
+  }
+}
+
+function exist_pdfnocrop() {
+  return exist_pdf();
+}
+function execute_pdfnocrop() {
+  cmd.mkdir('temp');
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} '+rotate(page)+' '+scale(book)+' -strip temp/${page.number}.tif');
+  cmd.exec('${settings.path_opj} -i temp/${page.number}.tif -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
+}
+function bookexist_pdfnocrop() {
+  return bookexist_pdf();
+}
+function bookexecute_pdfnocrop() {
+  return bookexecute_pdf();
+}

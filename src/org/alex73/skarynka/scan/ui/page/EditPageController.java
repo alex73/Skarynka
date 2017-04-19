@@ -75,8 +75,9 @@ public class EditPageController {
         this.bookController=bookController;
         this.book=bookController.getBook();
         page = Book2.formatPageNumber(pageNumber);
+        Book2.PageInfo pi = book.getPageInfo(page);
         dialog = new EditPageDialog(DataStorage.mainFrame, true);
-        fullImageSize = new Dimension(book.imageSizeX, book.imageSizeY);
+        fullImageSize = new Dimension(pi.imageSizeX, pi.imageSizeY);
 
         dialog.btnNext.addActionListener(actionNext);
         dialog.btnPrev.addActionListener(actionPrev);
@@ -146,6 +147,10 @@ public class EditPageController {
         dialog.preview.addMouseMotionListener(mouseMotionListener);
 
         showPage();
+        if (fullImageSize.width == 0 && fullImageSize.height == 0) {
+            fullImageSize.width = dialog.preview.getImage().getWidth();
+            fullImageSize.height = dialog.preview.getImage().getHeight();
+        }
 
         dialog.setSize(1000, 800);
         dialog.setLocationRelativeTo(DataStorage.mainFrame);

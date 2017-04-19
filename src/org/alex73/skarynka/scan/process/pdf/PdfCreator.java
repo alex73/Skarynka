@@ -31,34 +31,33 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class PdfCreator {
 
-	public static void create(File outFile, File[] jpegs) throws Exception {
-		Document pdf = new Document();
-		pdf.setMargins(0, 0, 0, 0);
+    public static void create(File outFile, File[] jpegs) throws Exception {
+        Document pdf = new Document();
+        pdf.setMargins(0, 0, 0, 0);
 
-		Image image0 = Jpeg.getInstance(jpegs[0].getPath());
-		pdf.setPageSize(new Rectangle(0, 0, image0.getScaledWidth(), image0
-				.getScaledHeight()));
+        Image image0 = Jpeg.getInstance(jpegs[0].getPath());
+        pdf.setPageSize(new Rectangle(0, 0, image0.getScaledWidth(), image0.getScaledHeight()));
 
-		PdfWriter writer = PdfWriter.getInstance(pdf, new FileOutputStream(
-				outFile));
+        PdfWriter writer = PdfWriter.getInstance(pdf, new FileOutputStream(outFile));
 
-		pdf.open();
-        float minWidth = Float.MAX_VALUE, maxWidth = Float.MIN_VALUE, minHeight = Float.MAX_VALUE, maxHeight = Float.MIN_VALUE;
-		for (File jpeg : jpegs) {
+        pdf.open();
+        float minWidth = Float.MAX_VALUE, maxWidth = Float.MIN_VALUE, minHeight = Float.MAX_VALUE,
+                maxHeight = Float.MIN_VALUE;
+        for (File jpeg : jpegs) {
 
-			Image image = Jpeg.getInstance(jpeg.getPath());
+            Image image = Jpeg.getInstance(jpeg.getPath());
 
-			float width, height;
+            float width, height;
 
-			width = image.getScaledWidth();
-			height = image.getScaledHeight();
-            minWidth=Math.min(minWidth, width);
-            maxWidth=Math.max(maxWidth, width);
-            minHeight=Math.min(minHeight, height);
-            maxHeight=Math.max(maxHeight, height);
+            width = image.getScaledWidth();
+            height = image.getScaledHeight();
+            minWidth = Math.min(minWidth, width);
+            maxWidth = Math.max(maxWidth, width);
+            minHeight = Math.min(minHeight, height);
+            maxHeight = Math.max(maxHeight, height);
 
-			pdf.setPageSize(new Rectangle(0, 0, width, height));
-			pdf.newPage();
+            pdf.setPageSize(new Rectangle(0, 0, width, height));
+            pdf.newPage();
             pdf.add(image);
         }
 

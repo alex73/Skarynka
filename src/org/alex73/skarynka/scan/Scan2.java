@@ -49,6 +49,7 @@ import org.alex73.skarynka.scan.hid.HIDScanController;
 import org.alex73.skarynka.scan.process.ProcessDaemon;
 import org.alex73.skarynka.scan.ui.MainFrame;
 import org.alex73.skarynka.scan.ui.ToolsPedalController;
+import org.alex73.skarynka.scan.ui.add.AddController;
 import org.alex73.skarynka.scan.ui.book.BooksController;
 import org.alex73.skarynka.scan.ui.book.PanelEditController;
 import org.alex73.skarynka.scan.ui.scan.ScanDialogController;
@@ -138,6 +139,9 @@ public class Scan2 {
         }
 
         DataStorage.mainFrame.cameraBadPixels.setVisible(Context.getPermissions().CameraBadPixels);
+        DataStorage.mainFrame.cameraMenu.setVisible(Context.getPermissions().ShowDevices);
+        DataStorage.mainFrame.processScan.setVisible(Context.getPermissions().ShowDevices);
+        DataStorage.mainFrame.processAdd.setVisible(Context.getPermissions().ShowManualAdd);
 
         DataStorage.mainFrame.addWindowListener(new WindowAdapter() {
             @Override
@@ -196,6 +200,12 @@ public class Scan2 {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ScanDialogController.show((PanelEditController) DataStorage.getActiveTab());
+            }
+        });
+        DataStorage.mainFrame.processAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AddController.add((PanelEditController) DataStorage.getActiveTab());
             }
         });
 

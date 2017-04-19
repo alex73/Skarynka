@@ -245,7 +245,8 @@ public class PagePopupMenu extends JPopupMenu {
                 if (pi == null) {
                     throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", startSelection));
                 }
-                book.addPage(newPage, pi);
+                pi.pageNumber = newPage;
+                book.addPage(pi);
 
                 File jpg = new File(book.getBookDir(), startSelection + ".jpg");
                 File raw = new File(book.getBookDir(), startSelection + ".raw");
@@ -323,7 +324,8 @@ public class PagePopupMenu extends JPopupMenu {
                 }
                 for (Map.Entry<String, PageInfo> en : movedPages.entrySet()) {
                     String newPage = Book2.incPagePos(en.getKey(), letter, count);
-                    book.addPage(newPage, en.getValue());
+                    en.getValue().pageNumber = newPage;
+                    book.addPage(en.getValue());
                 }
                 book.save();
 

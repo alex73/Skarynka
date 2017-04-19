@@ -48,16 +48,35 @@ import org.slf4j.LoggerFactory;
  * @author Aleś Bułojčyk <alex73mail@gmail.com>
  */
 public class Book2 {
+    public static final String[] IMAGE_EXTENSIONS = new String[] { "tif", "tiff", "jpg", "jpeg", "png", "bmp" };
+
     private static Logger LOG = LoggerFactory.getLogger(Book2.class);
 
     static final Pattern RE_BOOK = Pattern.compile("book.([a-zA-Z]+)=(.+)");
     static final Pattern RE_PAGE = Pattern.compile("page.([0-9a-z]+).([a-zA-z]+)=(.+)");
 
-    public static class PageInfo {
+    public class PageInfo {
+        public String pageNumber;
+        public int imageSizeX, imageSizeY;
         public int cropPosX = -1, cropPosY = -1;
         public Set<String> tags = new TreeSet<>();
         public int rotate;
         public String camera;
+        public String pageOriginalFileExt;
+
+        public PageInfo(String pageNumber) {
+            this.pageNumber = pageNumber;
+            for (String ext : Book2.IMAGE_EXTENSIONS) {
+                File f = new File(bookDir, pageNumber + '.' + ext);
+                if (f.exists()) {
+                    pageOriginalFileExt = ext;
+                    break;
+                }
+            }
+            if (pageOriginalFileExt == null) {
+                throw new RuntimeException("Page " + pageNumber + " file not found");
+            }
+        }
     }
 
     private final File bookDir, bookFile;
@@ -66,7 +85,6 @@ public class Book2 {
 
     public int scale = 100, dpi = 100;
     public int zoom;
-    public int imageSizeX, imageSizeY;
     public int cropSizeX = -1, cropSizeY = -1;
     public int pageStep = 2;
 
@@ -86,8 +104,8 @@ public class Book2 {
                     String value = m.group(3);
                     PageInfo pi = pages.get(page);
                     if (pi == null) {
-                        pi = new PageInfo();
-                        pages.put(page, pi);
+                        pi = new PageInfo(page);
+                        pages.put(pi.pageNumber, pi);
                     }
                     set(pi, fieldName, value, line);
                 } else if ((m = RE_BOOK.matcher(line)).matches()) {
@@ -227,8 +245,8 @@ public class Book2 {
         return errors;
     }
 
-    public synchronized void addPage(String pageNumber, PageInfo pageInfo) {
-        String page = formatPageNumber(pageNumber);
+    public synchronized void addPage(PageInfo pageInfo) {
+        String page = formatPageNumber(pageInfo.pageNumber);
         pages.put(page, pageInfo);
     }
 
@@ -238,7 +256,7 @@ public class Book2 {
     }
 
     public BufferedImage getImage(String pageNumber) throws Exception {
-        File f = new PageFileInfo(this, pageNumber).getOrigJpegFile();
+        File f = new PageFileInfo(this, pageNumber).getPreviewFile();
         return ImageIO.read(f);
     }
 

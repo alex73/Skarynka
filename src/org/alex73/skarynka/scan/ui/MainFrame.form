@@ -9,14 +9,21 @@
         <Menu class="javax.swing.JMenu" name="workMenu">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_BOOK" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_BOOK" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="processScan">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_BOOK_SCAN" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_BOOK_SCAN" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="processAdd">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_BOOK_ADD" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -26,7 +33,7 @@
                   <KeyStroke key="Ctrl+W"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_BOOK_CLOSE" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_BOOK_CLOSE" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -35,7 +42,7 @@
         <Menu class="javax.swing.JMenu" name="viewMenu">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_VIEW" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_VIEW" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <SubComponents>
@@ -45,7 +52,7 @@
                   <KeyStroke key="Ctrl+ADD"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_VIEW_INC" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_VIEW_INC" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -55,7 +62,7 @@
                   <KeyStroke key="Ctrl+SUBTRACT"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_VIEW_DEC" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_VIEW_DEC" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -68,7 +75,7 @@
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_VIEW_ALL" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_VIEW_ALL" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -78,7 +85,7 @@
                   <ComponentRef name="viewButtonsGroup"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_VIEW_SEQ" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_VIEW_SEQ" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -88,7 +95,7 @@
                   <ComponentRef name="viewButtonsGroup"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_VIEW_CROP_ERRORS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_VIEW_CROP_ERRORS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -97,21 +104,21 @@
         <Menu class="javax.swing.JMenu" name="cameraMenu">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_TOOLS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_TOOLS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="cameraInit">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_TOOLS_CAMERA_INIT" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_TOOLS_CAMERA_INIT" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="cameraFocus">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_TOOLS_CAMERA_FOCUS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_TOOLS_CAMERA_FOCUS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -120,14 +127,14 @@
             <MenuItem class="javax.swing.JMenuItem" name="cameraBadPixels">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_TOOLS_CAMERA_BADPIXELS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_TOOLS_CAMERA_BADPIXELS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="toolsPedal">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="MENU_TOOLS_PEDAL_TEST" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_TOOLS_PEDAL_TEST" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>
@@ -139,7 +146,7 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="0"/>
     <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-      <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="FRAME_TITLE" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+      <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="FRAME_TITLE" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -176,7 +183,7 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/alex73/skarynka/scan/m.properties" key="PANEL_EDIT_PROCESS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="PANEL_EDIT_PROCESS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Constraints>

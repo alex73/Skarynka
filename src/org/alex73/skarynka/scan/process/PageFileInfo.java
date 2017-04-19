@@ -59,8 +59,12 @@ public class PageFileInfo {
         return pi;
     }
 
-    public File getOrigJpegFile() {
-        return new File(book.getBookDir(), page + ".jpg");
+    public File getPreviewFile() {
+        return new File(book.getBookDir(), page + '.' + pi.pageOriginalFileExt + ".preview.jpg");
+    }
+
+    public File getOriginalFile() {
+        return new File(book.getBookDir(), page + '.' + pi.pageOriginalFileExt);
     }
 
     public File getRawFile() {
@@ -111,7 +115,7 @@ public class PageFileInfo {
 
         BufferedImage img;
 
-        File jpeg = getOrigJpegFile();
+        File jpeg = getPreviewFile();
         if (!jpeg.exists()) {
             return createErrorImage(maxWidth, maxHeight);
         }
@@ -138,11 +142,29 @@ public class PageFileInfo {
 
         Point2D.Double crop1 = new Point2D.Double();
         Point2D.Double crop2 = new Point2D.Double();
-        crop1.x = 1.0 * pi.cropPosX / book.imageSizeX;
-        crop1.y = 1.0 * pi.cropPosY / book.imageSizeY;
-        crop2.x = 1.0 * (pi.cropPosX + book.cropSizeX) / book.imageSizeX;
-        crop2.y = 1.0 * (pi.cropPosY + book.cropSizeY) / book.imageSizeY;
+        crop1.x = 1.0 * pi.cropPosX / pi.imageSizeX;
+        crop1.y = 1.0 * pi.cropPosY / pi.imageSizeY;
+        crop2.x = 1.0 * (pi.cropPosX + book.cropSizeX) / pi.imageSizeX;
+        crop2.y = 1.0 * (pi.cropPosY + book.cropSizeY) / pi.imageSizeY;
         ImageViewPane.drawCropRectangle(g, img, crop1, crop2, transform);
+        g.dispose();
+
+        return result;
+    }
+
+    public static BufferedImage scale(BufferedImage orig, int maxWidth, int maxHeight) {
+        BufferedImage result = new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = result.createGraphics();
+
+        AffineTransform transform = ImageViewPane.getAffineTransform(1, 1, 0, orig, maxWidth, maxHeight);
+
+        AffineTransform prev = g.getTransform();
+        try {
+            g.setTransform(transform);
+            g.drawImage(orig, 0, 0, null);
+        } finally {
+            g.setTransform(prev);
+        }
         g.dispose();
 
         return result;

@@ -254,6 +254,22 @@ public class ProcessDaemon extends Thread {
         public String getCamera() {
             return pi.camera;
         }
+
+        public int getImageSizeX() {
+            return pi.imageSizeX;
+        }
+
+        public int getImageSizeY() {
+            return pi.imageSizeY;
+        }
+
+        public String getOriginalPageFile() {
+            return page + '.' + pi.pageOriginalFileExt;
+        }
+
+        public String getPreviewPageFile() {
+            return getOriginalPageFile() + ".preview.jpg";
+        }
     }
 
     public static class BookContext {
@@ -283,14 +299,6 @@ public class ProcessDaemon extends Thread {
             return book.cropSizeY;
         }
 
-        public int getImageSizeX() {
-            return book.imageSizeX;
-        }
-
-        public int getImageSizeY() {
-            return book.imageSizeY;
-        }
-        
         public List<String> getPages() {
             return book.listPages();
         }
@@ -347,18 +355,26 @@ public class ProcessDaemon extends Thread {
                 throw new Exception("Error execution " + cmd + ": " + r + " / " + err);
             }
         }
-    	public void pdf(String bookOutPath, String bookName) throws Exception {
-    		File bookDir = new File(Context.getBookDir(), bookName);
-    		File outFile = new File(bookDir, bookOutPath);
-    		File[] jpegs = bookDir.listFiles(new FileFilter() {
-    			@Override
-    			public boolean accept(File f) {
-    				return f.isFile() && f.getName().endsWith(".jp2");
-    			}
-    		});
-    		Arrays.sort(jpegs);
-    		PdfCreator.create(outFile, jpegs);
-    	}
+
+        public void pdf(String bookOutPath, String imagesDirPath, String imagesExt) throws Exception {
+            File outFile = new File(book.getBookDir(), bookOutPath);
+            File imagesDir = new File(book.getBookDir(), imagesDirPath);
+            File[] jpegs = imagesDir.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.isFile() && f.getName().endsWith("." + imagesExt);
+                }
+            });
+            Arrays.sort(jpegs);
+            PdfCreator.create(outFile, jpegs);
+        }
+        public void mkdir(String p) {
+            new File(book.getBookDir(), p).mkdirs();
+        }
+
+        public String getExecDir() {
+            return new File(".").getAbsolutePath();
+        }
     }
 
     public static class Script {

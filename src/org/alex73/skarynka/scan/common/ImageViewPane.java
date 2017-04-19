@@ -83,6 +83,10 @@ public class ImageViewPane extends Component {
         repaint();
     }
 
+    public BufferedImage getImage() {
+        return img;
+    }
+
     public String getPageNumber() {
         return pageNumber;
     }

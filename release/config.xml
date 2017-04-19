@@ -7,6 +7,8 @@
         <!-- Directory with all books files -->
         <param host="scan" id="book-dir">/scan/books</param>
         <param host="scan" id="control-dir">/scan/control</param>
+        <param host="zhvir" id="book-dir">/data/Repo-MyShare-Temp/zhvir/books</param>
+        <param host="zhvir" id="control-dir">/data/Repo-MyShare-Temp/zhvir/control</param>
 
         <!-- Camera's vendor:product USB IDs. Will not be checked if not defined. Need to declare for be sure that camera 
             settings defined for specific cameras. -->
@@ -45,9 +47,13 @@
         <param id="path_djvm">djvm</param>
         <param os="Linux" id="command_charset">UTF-8</param>
         <param os="Windows" id="command_charset">Cp866</param>
+        <param os="Linux" id="path_opj">/data/gits/Skarynka/release/bin-linux/opj_compress</param>
+        <param os="Windows" id="path_opj">bin_windows/openjpeg/opj_compress</param>
 
         <!-- Parameters for A495 -->
         <param id="dcraw_params">-k 80 -g 1.3 4.5 -r 1.964870 1.001222 2.512568 1.000000</param>
+        
+        <param id="jp2_quality">60</param>
     </settings>
 
     <!-- CameraBadPixles: allow to find bad pixels in cameras -->
@@ -75,6 +81,15 @@
         <allow id="ShowNonLocalBooks" value="true" />
         <allow id="BookControl" value="true" />
     </permissions>
+    <permissions host="zhvir">
+        <allow id="CameraBadPixels" value="false" />
+        <allow id="ProcessingBooks" value="true" />
+        <allow id="ProcessingControls" value="false" />
+        <allow id="ShowNonLocalBooks" value="true" />
+        <allow id="BookControl" value="true" />
+        <allow id="ShowDevices" value="false" />
+        <allow id="ShowManualAdd" value="true" />
+    </permissions>
 
     <page-tags>
         <!-- All possible tags for pages -->
@@ -84,9 +99,8 @@
 
     <process-commands>
         <!-- All possible tags for pages -->
-        <command name="jpegoverview" title="Jpeg для тытульных старонак" />
-        <command name="edit" title="Рыхтаваць для рэдагаваньня" />
-        <command name="djvu" title="Канвэртаваць у DJVU" />
-        <command name="jp2" title="Канвэртаваць у JP2" />
+        <command name="preview" title="Аднавіць preview" />
+        <command name="pdf" title="Канвэртаваць у pdf" />
+        <command name="pdfnocrop" title="Канвэртаваць у pdf без уліку crop" />
     </process-commands>
 </config>

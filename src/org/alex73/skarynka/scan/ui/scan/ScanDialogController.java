@@ -59,6 +59,7 @@ public class ScanDialogController {
     private final Book2 book;
     private ScanDialog dialog;
     private String prev1, prev2;
+    private Dimension imageSize;
 
     public static void show(PanelEditController panelController) {
         new ScanDialogController(panelController);
@@ -70,7 +71,7 @@ public class ScanDialogController {
         int currentZoom = DataStorage.device.getZoom();
 
         Dimension[] deviceImageSizes = DataStorage.device.getImageSize();
-        Dimension imageSize = deviceImageSizes[0];
+        imageSize = deviceImageSizes[0];
         for (int i = 1; i < deviceImageSizes.length; i++) {
             if (!imageSize.equals(deviceImageSizes[i])) {
                 JOptionPane.showMessageDialog(DataStorage.mainFrame,
@@ -92,29 +93,15 @@ public class ScanDialogController {
                     return;
                 }
             }
-            if (imageSize.width != book.imageSizeX || imageSize.height != book.imageSizeY) {
-                if (JOptionPane.showConfirmDialog(DataStorage.mainFrame,
-                        Messages.getString("ERROR_WRONG_IMAGESIZE", pagesCount,
-                                s(new Dimension(book.imageSizeX, book.imageSizeY)), s(imageSize)),
-                        Messages.getString("ERROR_TITLE"), JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.WARNING_MESSAGE) != JOptionPane.OK_OPTION) {
-                    return;
-                }
-                for (String page : book.listPages()) {
-                    Book2.PageInfo pi = book.getPageInfo(page);
-                    pi.cropPosX = Integer.MIN_VALUE;
-                    pi.cropPosY = Integer.MIN_VALUE;
-                }
-            }
         }
 
         book.zoom = currentZoom;
-        book.imageSizeX = imageSize.width;
-        book.imageSizeY = imageSize.height;
         String dpi = Context.getSettings().get("dpi." + book.zoom);
-if (dpi!=null) {
-        book.dpi = Integer.parseInt(dpi);
-} else {book.dpi=300;}
+        if (dpi != null) {
+            book.dpi = Integer.parseInt(dpi);
+        } else {
+            book.dpi = 300;
+        }
 
         dialog = new ScanDialog(DataStorage.mainFrame, true);
         dialog.btnClose.addActionListener(new ActionListener() {
@@ -214,21 +201,25 @@ if (dpi!=null) {
         try {
             String[] camerasIds = DataStorage.device.scan(p1p, p2p);
             if (p1p != null) {
-                Book2.PageInfo pi = new Book2.PageInfo();
+                Book2.PageInfo pi = book.new PageInfo(p1f);
                 pi.rotate = dialog.liveLeft.getRotation();
                 pi.tags.clear();
                 pi.tags.addAll(dialog.controlLeft.tags.getValues());
                 pi.camera = camerasIds[0];
-                book.addPage(p1f, pi);
+                pi.imageSizeX = imageSize.width;
+                pi.imageSizeY = imageSize.height;
+                book.addPage(pi);
                 panelController.updatePreview(p1f);
             }
             if (p2p != null) {
-                Book2.PageInfo pi = new Book2.PageInfo();
+                Book2.PageInfo pi = book.new PageInfo(p2f);
                 pi.rotate = dialog.liveRight.getRotation();
                 pi.tags.clear();
                 pi.tags.addAll(dialog.controlRight.tags.getValues());
                 pi.camera = camerasIds[1];
-                book.addPage(p2f, pi);
+                pi.imageSizeX = imageSize.width;
+                pi.imageSizeY = imageSize.height;
+                book.addPage(pi);
                 panelController.updatePreview(p2f);
             }
         } catch (Exception ex) {
