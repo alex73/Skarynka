@@ -54,6 +54,7 @@
         <param id="dcraw_params">-k 80 -g 1.3 4.5 -r 1.964870 1.001222 2.512568 1.000000</param>
         
         <param id="jp2_quality">60</param>
+        <param id="preview_size">800</param>
     </settings>
 
     <!-- CameraBadPixles: allow to find bad pixels in cameras -->
@@ -99,7 +100,6 @@
 
     <process-commands>
         <!-- All possible tags for pages -->
-        <command name="preview" title="Аднавіць preview" />
         <command name="pdf" title="Канвэртаваць у pdf" />
         <command name="pdfnocrop" title="Канвэртаваць у pdf без уліку crop" />
     </process-commands>

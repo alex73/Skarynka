@@ -29,6 +29,10 @@ function dpi(book) {
   return '-dpi '+Math.round(book.dpi*book.scale/100);
 }
 
+function command_preview() {
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} -scale ${settings.preview_size}x${settings.preview_size} preview/${page.number}.jpg');
+}
+
 /*
  * 'edit' processing
  */
@@ -113,21 +117,10 @@ function bookexecute_jpegoverview() {
   }
 }
 
-function exist_preview() {
-  return cmd.fileExist(page.previewPageFile);
-}
-function execute_preview() {
-  cmd.exec('${settings.path_convert} ${page.originalPageFile} -scale 500x500 ${page.previewPageFile}');
-}
-function bookexist_preview() {
-  return true;
-}
-
 function exist_pdf() {
   return cmd.fileExist('temp/'+page.number+'.jp2');
 }
 function execute_pdf() {
-  cmd.mkdir('temp');
   cmd.exec('${settings.path_convert} ${page.originalPageFile} -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY} '+rotate(page)+' '+scale(book)+' -strip temp/${page.number}.tif');
   cmd.exec('${settings.path_opj} -i temp/${page.number}.tif -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
 }
@@ -145,7 +138,6 @@ function exist_pdfnocrop() {
   return exist_pdf();
 }
 function execute_pdfnocrop() {
-  cmd.mkdir('temp');
   cmd.exec('${settings.path_convert} ${page.originalPageFile} '+rotate(page)+' '+scale(book)+' -strip temp/${page.number}.tif');
   cmd.exec('${settings.path_opj} -i temp/${page.number}.tif -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
 }

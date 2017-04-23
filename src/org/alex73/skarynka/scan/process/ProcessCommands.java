@@ -21,16 +21,12 @@
 package org.alex73.skarynka.scan.process;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.alex73.skarynka.scan.Context;
-import org.alex73.skarynka.scan.process.pdf.PdfCreator;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

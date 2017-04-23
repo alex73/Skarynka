@@ -94,6 +94,7 @@ public class Book2 {
     public Book2(File bookDir) throws Exception {
         this.bookDir = bookDir;
         this.bookFile = new File(bookDir, "book.properties");
+        new File(bookDir, "preview").mkdirs();
         File localFile = new File(bookDir, ".local");
         if (bookFile.exists()) {
             for (String line : FileUtils.readLines(bookFile, "UTF-8")) {

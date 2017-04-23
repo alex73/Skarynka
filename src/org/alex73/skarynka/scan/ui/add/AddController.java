@@ -13,7 +13,9 @@ import org.alex73.skarynka.scan.Book2;
 import org.alex73.skarynka.scan.Context;
 import org.alex73.skarynka.scan.DataStorage;
 import org.alex73.skarynka.scan.Messages;
+import org.alex73.skarynka.scan.process.ProcessDaemon;
 import org.alex73.skarynka.scan.ui.book.PanelEditController;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +53,14 @@ public class AddController {
         });
         fc.setAcceptAllFileFilterUsed(false);
 
+        ProcessDaemon.Script previewScript;
+        try {
+            previewScript = new ProcessDaemon.Script("preview");
+            previewScript.compilePreview();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
         int returnVal = fc.showOpenDialog(DataStorage.mainFrame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             currentDir = fc.getCurrentDirectory();
@@ -83,12 +93,16 @@ public class AddController {
                 String fn = files[i].getName();
                 String ext = fn.substring(fn.lastIndexOf('.') + 1).toLowerCase();
                 File fo = new File(panelController.getBook().getBookDir(), pages[i] + '.' + ext);
-                if (!files[i].renameTo(fo)) {
+
+                try {
+                    FileUtils.moveFile(files[i], fo);
+                } catch (Exception ex) {
                     JOptionPane.showMessageDialog(DataStorage.mainFrame,
                             "Error rename " + files[i] + " to " + fo + " !", Messages.getString("ERROR_ADD_PAGE"),
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+
                 Book2.PageInfo pi = panelController.getBook().new PageInfo(pages[i]);
                 try {
                     BufferedImage img = ImageIO.read(fo);
@@ -100,13 +114,14 @@ public class AddController {
                         pi.imageSizeX = Math.round(o.getWidth());
                         pi.imageSizeY = Math.round(o.getHeight());
                     }
+                    panelController.getBook().addPage(pi);
+                    previewScript.execPreview(panelController.getBook(), pages[i]);
                 } catch (Exception ex) {
                     LOG.error("Error add page from " + fo, ex);
                     JOptionPane.showMessageDialog(DataStorage.mainFrame, ex.getMessage(),
                             Messages.getString("ERROR_ADD_PAGE"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                panelController.getBook().addPage(pi);
             }
             JOptionPane.showMessageDialog(DataStorage.mainFrame, "Файлы імпартаваныя", "Дадаць файлы",
                     JOptionPane.INFORMATION_MESSAGE);

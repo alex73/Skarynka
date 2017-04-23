@@ -22,6 +22,7 @@ package org.alex73.skarynka.scan.process;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -168,6 +169,7 @@ public class ProcessDaemon extends Thread {
                     FileUtils.writeStringToFile(errorFile, "Error get script: " + ex.getMessage(), UTF8);
                     continue;
                 }
+                currentScript.makeTemp(book);
                 boolean wasError = false;
                 for (String p : book.listPages()) {
                     if (finish) {
@@ -197,6 +199,7 @@ public class ProcessDaemon extends Thread {
                         if (!currentScript.bookResultExist(book)) {
                             currentScript.bookExecute(book);
                         }
+                        currentScript.removeTemp(book);
                     }
                 } catch (Throwable ex) {
                     LOG.info("Error process book", ex);
@@ -368,10 +371,6 @@ public class ProcessDaemon extends Thread {
             Arrays.sort(jpegs);
             PdfCreator.create(outFile, jpegs);
         }
-        public void mkdir(String p) {
-            new File(book.getBookDir(), p).mkdirs();
-        }
-
         public String getExecDir() {
             return new File(".").getAbsolutePath();
         }
@@ -381,6 +380,7 @@ public class ProcessDaemon extends Thread {
         public final String script;
         public final String command;
         public ScriptEngine engine;
+        public CompiledScript csPreview;
         public CompiledScript csPageResultExists;
         public CompiledScript csPageExecute;
         public CompiledScript csBookResultExists;
@@ -393,6 +393,20 @@ public class ProcessDaemon extends Thread {
 
         public boolean theSame(Script obj) {
             return script.equals(obj.script) && command.equals(obj.command);
+        }
+
+        public void compilePreview() throws Exception {
+            engine = new ScriptEngineManager().getEngineByName("nashorn");
+            csPreview = ((Compilable) engine).compile(script + "\n command_preview();");
+        }
+
+        public void execPreview(Book2 book, String page) throws Exception {
+            Bindings bindings = engine.createBindings();
+            bindings.put("settings", Context.getSettings());
+            bindings.put("page", new PageContext(book, page));
+            bindings.put("book", new BookContext(book));
+            bindings.put("cmd", new CommandContext(book, bindings));
+            csPreview.eval(bindings);
         }
 
         public void compile() throws Exception {
@@ -435,6 +449,14 @@ public class ProcessDaemon extends Thread {
             bindings.put("book", new BookContext(book));
             bindings.put("cmd", new CommandContext(book, bindings));
             csBookExecute.eval(bindings);
+        }
+
+        public void makeTemp(Book2 book) {
+            new File(book.getBookDir(), "temp").mkdirs();
+        }
+
+        public void removeTemp(Book2 book) throws IOException {
+            FileUtils.deleteDirectory(new File(book.getBookDir(), "temp"));
         }
     }
 }

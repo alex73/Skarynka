@@ -60,7 +60,7 @@ public class PageFileInfo {
     }
 
     public File getPreviewFile() {
-        return new File(book.getBookDir(), page + '.' + pi.pageOriginalFileExt + ".preview.jpg");
+        return new File(book.getBookDir(), "preview/"+page + ".jpg");
     }
 
     public File getOriginalFile() {
