@@ -53,14 +53,6 @@ public class AddController {
         });
         fc.setAcceptAllFileFilterUsed(false);
 
-        ProcessDaemon.Script previewScript;
-        try {
-            previewScript = new ProcessDaemon.Script("preview");
-            previewScript.compilePreview();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-
         int returnVal = fc.showOpenDialog(DataStorage.mainFrame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             currentDir = fc.getCurrentDirectory();
@@ -115,7 +107,7 @@ public class AddController {
                         pi.imageSizeY = Math.round(o.getHeight());
                     }
                     panelController.getBook().addPage(pi);
-                    previewScript.execPreview(panelController.getBook(), pages[i]);
+                    ProcessDaemon.createPreviewIfNeed(panelController.getBook(), pages[i]);
                 } catch (Exception ex) {
                     LOG.error("Error add page from " + fo, ex);
                     JOptionPane.showMessageDialog(DataStorage.mainFrame, ex.getMessage(),

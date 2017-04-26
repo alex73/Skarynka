@@ -52,6 +52,7 @@ import org.alex73.skarynka.scan.IPagePreviewChanged;
 import org.alex73.skarynka.scan.ITabController;
 import org.alex73.skarynka.scan.Messages;
 import org.alex73.skarynka.scan.PagePreviewer;
+import org.alex73.skarynka.scan.process.ProcessDaemon;
 import org.alex73.skarynka.scan.ui.page.EditPageController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,6 +99,11 @@ public class PanelEditController implements ITabController {
         });
 
         previewer = new PagePreviewer(book);
+
+        List<String> pages = book.listPages();
+        for (String p : pages) {
+            ProcessDaemon.createPreviewIfNeed(book, p);
+        }
 
         show();
     }

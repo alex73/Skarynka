@@ -355,7 +355,7 @@ public class ProcessDaemon extends Thread {
             if (r != 0) {
                 String err = IOUtils.toString(process.getErrorStream(),
                         Context.getSettings().get("command_charset"));
-                throw new Exception("Error execution " + cmd + ": " + r + " / " + err);
+                throw new Exception("Error execution " + Arrays.toString(cmda) + ": " + r + " / " + err);
             }
         }
 
@@ -457,6 +457,23 @@ public class ProcessDaemon extends Thread {
 
         public void removeTemp(Book2 book) throws IOException {
             FileUtils.deleteDirectory(new File(book.getBookDir(), "temp"));
+        }
+    }
+
+    private static Script previewScript;
+
+    public static synchronized void createPreviewIfNeed(Book2 book, String page) {
+        try {
+            if (previewScript == null) {
+                previewScript = new ProcessDaemon.Script("preview");
+                previewScript.compilePreview();
+            }
+            PageFileInfo pfi = new PageFileInfo(book, page);
+            if (!pfi.getPreviewFile().exists()) {
+                previewScript.execPreview(book, page);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
