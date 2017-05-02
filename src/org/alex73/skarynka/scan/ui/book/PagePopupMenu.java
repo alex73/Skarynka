@@ -40,6 +40,7 @@ import javax.swing.text.Document;
 
 import org.alex73.skarynka.scan.Book2;
 import org.alex73.skarynka.scan.Book2.PageInfo;
+import org.alex73.skarynka.scan.ui.page.EditPageController;
 import org.alex73.skarynka.scan.DataStorage;
 import org.alex73.skarynka.scan.Messages;
 import org.apache.commons.lang3.StringUtils;
@@ -57,29 +58,26 @@ public class PagePopupMenu extends JPopupMenu {
 
     private final PanelEditController controller;
     private final Book2 book;
-    private final String startSelection, endSelection;
+    private List<Integer> selectedIndexes;
+    private List<String> selectedPages;
+    // private final String startSelection, endSelection;
 
-    public PagePopupMenu(PanelEditController controller, String fromPage, String toPage) {
+    public PagePopupMenu(PanelEditController controller) {
         this.controller = controller;
         this.book = controller.getBook();
-        if (fromPage == null) {
-            fromPage = toPage;
-        }
-        if (fromPage.compareTo(toPage) <= 0) {
-            startSelection = fromPage;
-            endSelection = toPage;
-        } else {
-            startSelection = toPage;
-            endSelection = fromPage;
+
+        selectedIndexes = controller.selection.getSelected();
+        selectedPages = new ArrayList<>();
+        for (int p : selectedIndexes) {
+            selectedPages.add(controller.getPageByIndex(p));
         }
 
         JMenuItem remove;
-        if (startSelection.equals(endSelection)) {
-            remove = new JMenuItem(
-                    Messages.getString("PAGE_POPUP_REMOVE", Book2.simplifyPageNumber(endSelection)));
+        if (selectedIndexes.size() == 1) {
+            remove = new JMenuItem(Messages.getString("PAGE_POPUP_REMOVE",
+                    Book2.simplifyPageNumber(controller.getPageByIndex(selectedIndexes.get(0)))));
         } else {
-            remove = new JMenuItem(Messages.getString("PAGE_POPUP_REMOVES",
-                    Book2.simplifyPageNumber(startSelection), Book2.simplifyPageNumber(endSelection)));
+            remove = new JMenuItem(Messages.getString("PAGE_POPUP_REMOVES", selectedIndexes.size()));
         }
 
         JMenuItem m1 = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_M1"));
@@ -87,8 +85,15 @@ public class PagePopupMenu extends JPopupMenu {
         JMenuItem ma = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_MA"));
         JMenuItem pa = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_PA"));
 
+        JMenuItem editSelected = new JMenuItem(Messages.getString("PAGE_POPUP_EDIT_SELECTED"));
+        editSelected.addActionListener(editSelectedAction);
+        JMenuItem rotateLeft = new JMenuItem(Messages.getString("PAGE_POPUP_ROTATE_LEFT"));
+        rotateLeft.addActionListener(rotateLeftAction);
+        JMenuItem rotateRight = new JMenuItem(Messages.getString("PAGE_POPUP_ROTATE_RIGHT"));
+        rotateRight.addActionListener(rotateRightAction);
+
         JMenuItem rename = new JMenuItem(Messages.getString("PAGE_POPUP_RENAME"));
-        rename.setEnabled(startSelection.equals(endSelection));
+        rename.setEnabled(selectedIndexes.size() == 1);
 
         rename.addActionListener(renameAction);
         remove.addActionListener(removeAction);
@@ -97,6 +102,9 @@ public class PagePopupMenu extends JPopupMenu {
         new MoveActionListener(true, -1, ma);
         new MoveActionListener(true, 1, pa);
 
+        add(editSelected);
+        add(rotateLeft);
+        add(rotateRight);
         add(rename);
         add(m1);
         add(p1);
@@ -105,12 +113,12 @@ public class PagePopupMenu extends JPopupMenu {
         add(remove);
     }
 
-    boolean isPossible(boolean letter, int count) {
+    boolean isMovePossible(boolean letter, int count) {
         List<String> pagesList = book.listPages();
         Set<String> pagesSet = new HashSet<>(pagesList);
         List<String> movedPages = new ArrayList<>();
         for (String p : pagesList) {
-            if (startSelection.compareTo(p) <= 0 && p.compareTo(endSelection) <= 0) {
+            if (selectedPages.contains(p)) {
                 pagesSet.remove(p);
                 movedPages.add(p);
             }
@@ -129,7 +137,7 @@ public class PagePopupMenu extends JPopupMenu {
     boolean isAllLetters() {
         List<String> pagesList = book.listPages();
         for (String p : pagesList) {
-            if (startSelection.compareTo(p) <= 0 && p.compareTo(endSelection) <= 0) {
+            if (selectedPages.contains(p)) {
                 char last = p.charAt(p.length() - 1);
                 if (last >= '0' && last <= '9') {
                     return false;
@@ -143,15 +151,15 @@ public class PagePopupMenu extends JPopupMenu {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (JOptionPane.showConfirmDialog(DataStorage.mainFrame,
-                    Messages.getString("PAGE_POPUP_CONFIRM_REMOVE", startSelection, endSelection), "Confirm",
+                    Messages.getString("PAGE_POPUP_CONFIRM_REMOVE", selectedIndexes.size()), "Confirm",
                     JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                 return;
             }
-            LOG.info("Remove pages from " + startSelection + " to " + endSelection);
+            LOG.info("Remove pages " + selectedIndexes);
             try {
                 List<String> pagesList = book.listPages();
                 for (String p : pagesList) {
-                    if (startSelection.compareTo(p) <= 0 && p.compareTo(endSelection) <= 0) {
+                    if (selectedPages.contains(p)) {
                         book.removePage(p);
                         File jpg = new File(book.getBookDir(), p + ".jpg");
                         File raw = new File(book.getBookDir(), p + ".raw");
@@ -166,17 +174,24 @@ public class PagePopupMenu extends JPopupMenu {
                 book.save();
             } catch (Throwable ex) {
                 LOG.error("Error remove : ", ex);
-                JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
             controller.show();
+        }
+    };
+
+    ActionListener editSelectedAction = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            EditPageController.show(controller, selectedPages, selectedPages.get(0));
         }
     };
 
     String showPageNumberDialog() {
         StringBuilder result = new StringBuilder();
         PageNumber dialog = new PageNumber(DataStorage.mainFrame, true);
-        dialog.setTitle(Messages.getString("PAGE_NUMBER_TITLE", Book2.simplifyPageNumber(startSelection)));
+        dialog.setTitle(Messages.getString("PAGE_NUMBER_TITLE", Book2.simplifyPageNumber(selectedPages.get(0))));
         dialog.errorLabel.setText(" ");
         dialog.renameButton.addActionListener(new ActionListener() {
             @Override
@@ -214,8 +229,8 @@ public class PagePopupMenu extends JPopupMenu {
                         Book2.PageInfo pi = book.getPageInfo(newText);
                         if (pi != null) {
                             dialog.renameButton.setEnabled(false);
-                            dialog.errorLabel.setText(Messages.getString("PAGE_NUMBER_ERROR_EXIST",
-                                    Book2.simplifyPageNumber(newText)));
+                            dialog.errorLabel.setText(
+                                    Messages.getString("PAGE_NUMBER_ERROR_EXIST", Book2.simplifyPageNumber(newText)));
                         } else {
                             dialog.renameButton.setEnabled(true);
                         }
@@ -231,6 +246,29 @@ public class PagePopupMenu extends JPopupMenu {
         return result.toString();
     }
 
+    ActionListener rotateLeftAction = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LOG.info("Rotate left");
+            for (String p : selectedPages) {
+                PageInfo pi = book.getPageInfo(p);
+                pi.rotate = (pi.rotate + 3) % 4;
+                controller.updatePreview(p);
+            }
+        }
+    };
+    ActionListener rotateRightAction = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LOG.info("Rotate right");
+            for (String p : selectedPages) {
+                PageInfo pi = book.getPageInfo(p);
+                pi.rotate = (pi.rotate + 1) % 4;
+                controller.updatePreview(p);
+            }
+        }
+    };
+
     ActionListener renameAction = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -239,31 +277,32 @@ public class PagePopupMenu extends JPopupMenu {
             if (StringUtils.isEmpty(newPage)) {
                 return;
             }
-            LOG.info("Rename page " + startSelection + " to " + newPage);
+            String oldPage = selectedPages.get(0);
+            LOG.info("Rename page " + oldPage + " to " + newPage);
             try {
-                PageInfo pi = book.removePage(startSelection);
+                PageInfo pi = book.removePage(oldPage);
                 if (pi == null) {
-                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", startSelection));
+                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
                 }
                 pi.pageNumber = newPage;
                 book.addPage(pi);
 
-                File jpg = new File(book.getBookDir(), startSelection + ".jpg");
-                File raw = new File(book.getBookDir(), startSelection + ".raw");
+                File jpg = new File(book.getBookDir(), oldPage + ".jpg");
+                File raw = new File(book.getBookDir(), oldPage + ".raw");
                 File newJpg = new File(book.getBookDir(), newPage + ".jpg");
                 File newRaw = new File(book.getBookDir(), newPage + ".raw");
                 if (!jpg.renameTo(newJpg)) {
-                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", startSelection));
+                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
                 }
                 if (!raw.renameTo(newRaw)) {
-                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", startSelection));
+                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
                 }
 
                 book.save();
             } catch (Throwable ex) {
                 LOG.error("Error rename : ", ex);
-                JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
             controller.show();
         }
@@ -277,7 +316,7 @@ public class PagePopupMenu extends JPopupMenu {
             this.letter = letter;
             this.count = count;
 
-            boolean enabled = isPossible(letter, count);
+            boolean enabled = isMovePossible(letter, count);
             if (letter && !isAllLetters()) {
                 enabled = false;
             }
@@ -289,8 +328,7 @@ public class PagePopupMenu extends JPopupMenu {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            LOG.info("Move pages from " + startSelection + " to " + endSelection + ": letter=" + letter
-                    + " count=" + count);
+            LOG.info("Move pages");
             try {
                 File tempDir = new File(book.getBookDir(), "move-temp.dir");
                 if (tempDir.exists()) {
@@ -302,7 +340,7 @@ public class PagePopupMenu extends JPopupMenu {
                 List<String> pagesList = book.listPages();
 
                 for (String p : pagesList) {
-                    if (startSelection.compareTo(p) <= 0 && p.compareTo(endSelection) <= 0) {
+                    if (selectedPages.contains(p)) {
                         File jpg = new File(book.getBookDir(), p + ".jpg");
                         File raw = new File(book.getBookDir(), p + ".raw");
                         File tempJpg = new File(tempDir, p + ".jpg");
@@ -317,7 +355,7 @@ public class PagePopupMenu extends JPopupMenu {
                 }
 
                 for (String p : pagesList) {
-                    if (startSelection.compareTo(p) <= 0 && p.compareTo(endSelection) <= 0) {
+                    if (selectedPages.contains(p)) {
                         PageInfo pi = book.removePage(p);
                         movedPages.put(p, pi);
                     }
@@ -348,8 +386,8 @@ public class PagePopupMenu extends JPopupMenu {
                 tempDir.delete();
             } catch (Throwable ex) {
                 LOG.error("Error remove : ", ex);
-                JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
             controller.show();
         }

@@ -41,24 +41,62 @@ public class PanelEdit extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
+        jSplitPane1 = new javax.swing.JSplitPane();
         pagesScrollBar = new javax.swing.JScrollPane();
         pagesPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        previewOrig = new javax.swing.JButton();
+        previewFull = new javax.swing.JButton();
+        previewInc = new javax.swing.JButton();
+        previewDec = new javax.swing.JButton();
+        scrollPreview = new javax.swing.JScrollPane();
 
         setLayout(new java.awt.BorderLayout());
 
+        jSplitPane1.setResizeWeight(0.5);
+
         pagesScrollBar.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        pagesPanel.setLayout(new java.awt.GridLayout(1, 0, 10, 10));
+        pagesPanel.setLayout(new java.awt.GridLayout(0, 5, 10, 10));
         pagesScrollBar.setViewportView(pagesPanel);
 
-        add(pagesScrollBar, java.awt.BorderLayout.CENTER);
+        jSplitPane1.setLeftComponent(pagesScrollBar);
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        previewOrig.setText("1:1");
+        jPanel2.add(previewOrig);
+
+        previewFull.setText("#");
+        jPanel2.add(previewFull);
+
+        previewInc.setText("+");
+        jPanel2.add(previewInc);
+
+        previewDec.setText("-");
+        jPanel2.add(previewDec);
+
+        jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
+        jPanel1.add(scrollPreview, java.awt.BorderLayout.CENTER);
+
+        jSplitPane1.setRightComponent(jPanel1);
+
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JPanel jPanel1;
+    public javax.swing.JPanel jPanel2;
+    public javax.swing.JSplitPane jSplitPane1;
     public javax.swing.JPanel pagesPanel;
     public javax.swing.JScrollPane pagesScrollBar;
+    public javax.swing.JButton previewDec;
+    public javax.swing.JButton previewFull;
+    public javax.swing.JButton previewInc;
+    public javax.swing.JButton previewOrig;
+    public javax.swing.JScrollPane scrollPreview;
     // End of variables declaration//GEN-END:variables
 }

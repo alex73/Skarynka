@@ -239,6 +239,20 @@ public class Scan2 {
                 DataStorage.refreshBookPanels(false);
             }
         });
+        DataStorage.mainFrame.itemOdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DataStorage.view = DataStorage.SHOW_TYPE.ODD;
+                DataStorage.refreshBookPanels(false);
+            }
+        });
+        DataStorage.mainFrame.itemEven.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DataStorage.view = DataStorage.SHOW_TYPE.EVEN;
+                DataStorage.refreshBookPanels(false);
+            }
+        });
         DataStorage.mainFrame.itemCropErr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

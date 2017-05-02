@@ -49,7 +49,7 @@ public class DataStorage {
     public static final int INITIAL_PREVIEW_MAX_HEIGHT = 100;
 
     public enum SHOW_TYPE {
-        ALL, SEQ, CROP_ERRORS, TAG
+        ALL, SEQ, CROP_ERRORS, ODD, EVEN, TAG
     };
 
     public static MainFrame mainFrame;

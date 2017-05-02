@@ -20,40 +20,36 @@
  **************************************************************************/
 package org.alex73.skarynka.scan.ui.book;
 
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
+import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
+import javax.swing.KeyStroke;
 
 import org.alex73.skarynka.scan.Book2;
 import org.alex73.skarynka.scan.DataStorage;
-import org.alex73.skarynka.scan.IPagePreviewChanged;
 import org.alex73.skarynka.scan.ITabController;
 import org.alex73.skarynka.scan.Messages;
 import org.alex73.skarynka.scan.PagePreviewer;
+import org.alex73.skarynka.scan.common.ImageViewPane;
 import org.alex73.skarynka.scan.process.ProcessDaemon;
-import org.alex73.skarynka.scan.ui.page.EditPageController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,11 +63,10 @@ public class PanelEditController implements ITabController {
 
     private final Book2 book;
     private final PanelEdit panel;
+    protected final ImageViewPane previewPage;
 
-    private boolean selectionEnabled;
-    private String currentSelection, startSelection;
-    private Border borderNone, borderFocused, borderSelected;
-    private PagePreviewer previewer;
+    protected SelectionController selection;
+    protected PagePreviewer previewer;
     private List<JMenuItem> menuItems = new ArrayList<>();
 
     @Override
@@ -88,6 +83,7 @@ public class PanelEditController implements ITabController {
         this.book = book;
         panel = new PanelEdit();
         panel.setName(book.getName());
+        selection = new SelectionController(panel.pagesPanel);
 
         panel.pagesScrollBar.getVerticalScrollBar().setUnitIncrement(20);
 
@@ -98,6 +94,18 @@ public class PanelEditController implements ITabController {
             }
         });
 
+        previewPage = new ImageViewPane();
+        panel.scrollPreview.setViewportView(previewPage);
+        panel.previewOrig.addActionListener((e) -> {
+            BufferedImage image = previewPage.getImage();
+            previewPage.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
+            panel.scrollPreview.revalidate();
+        });
+        panel.previewFull.addActionListener((e) -> {
+            previewPage.setPreferredSize(new Dimension(50, 50));
+            panel.scrollPreview.revalidate();
+        });
+
         previewer = new PagePreviewer(book);
 
         List<String> pages = book.listPages();
@@ -106,6 +114,100 @@ public class PanelEditController implements ITabController {
         }
 
         show();
+    }
+
+    KeyListener KEY_LISTENER = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            Point p = getFocusPosition();
+            if (p == null) {
+                return;
+            }
+            boolean moved = false;
+            switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                p.y--;
+                moved = true;
+                break;
+            case KeyEvent.VK_DOWN:
+                p.y++;
+                moved = true;
+                break;
+            case KeyEvent.VK_LEFT:
+                p.x--;
+                moved = true;
+                break;
+            case KeyEvent.VK_RIGHT:
+                p.x++;
+                moved = true;
+                break;
+            case KeyEvent.VK_A:
+                if (e.isControlDown()) {
+                    selection.addSelectionInterval(0, panel.pagesPanel.getComponentCount());
+                    e.consume();
+                }
+                break;
+            }
+            if (moved) {
+                PageComponent c = setFocusPosition(p);
+                if (c != null) {
+                    if (!e.isShiftDown()) {
+                        selection.clear();
+                        selection.setStart(getPointIndex(p));
+                    }
+                    selection.setEnd(getPointIndex(p));
+                    if (c != null) {
+                        c.scrollRectToVisible(c.getBounds());
+                    }
+                }
+                e.consume();
+            }
+        }
+    };
+
+    Point getFocusPosition() {
+        int idx = -1;
+        for (int i = 0; i < panel.pagesPanel.getComponentCount(); i++) {
+            if (panel.pagesPanel.getComponent(i).isFocusOwner()) {
+                idx = i;
+                break;
+            }
+        }
+        if (idx < 0) {
+            return null;
+        }
+        GridLayout grid = (GridLayout) panel.pagesPanel.getLayout();
+        Point r = new Point();
+        r.x = idx % grid.getColumns();
+        r.y = idx / grid.getColumns();
+        return r;
+    }
+
+    int getPointIndex(Point p) {
+        GridLayout grid = (GridLayout) panel.pagesPanel.getLayout();
+        return p.x + grid.getColumns() * p.y;
+    }
+
+    PageComponent setFocusPosition(Point p) {
+        int idx = getPointIndex(p);
+        if (idx >= 0 && idx < panel.pagesPanel.getComponentCount()) {
+            PageComponent c = (PageComponent) panel.pagesPanel.getComponent(idx);
+            c.requestFocus();
+            return c;
+        } else {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("serial")
+    void bind(int vk, ActionListener listener) {
+        panel.pagesPanel.getInputMap().put(KeyStroke.getKeyStroke(vk, 0), "ACTION_KEY_" + vk);
+        panel.pagesPanel.getActionMap().put("ACTION_KEY_" + vk, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.actionPerformed(e);
+            }
+        });
     }
 
     public Book2 getBook() {
@@ -191,14 +293,8 @@ public class PanelEditController implements ITabController {
     }
 
     public synchronized PanelEdit show() {
-        borderNone = BorderFactory.createLineBorder(panel.getBackground());
-        borderFocused = BorderFactory.createLineBorder(Color.RED);
-        borderSelected = BorderFactory.createLineBorder(Color.BLUE);
-
         panel.pagesPanel.removeAll();
-        selectionEnabled = false;
-        startSelection = null;
-        currentSelection = null;
+        selection.reset();
 
         List<String> pages = book.listPages();
         switch (DataStorage.view) {
@@ -216,7 +312,7 @@ public class PanelEditController implements ITabController {
                 if (prevLabel != null && !prev.equals(prevLabelStart)) {
                     prevLabel.setText(prevLabel.getText() + ".." + Book2.simplifyPageNumber(prev));
                 }
-                panel.pagesPanel.add(prevLabel = createLabel(page));
+                prevLabel = createPage(page, false);
                 prev = prevLabelStart = page;
             }
             if (prevLabel != null && !prev.equals(prevLabelStart)) {
@@ -224,17 +320,32 @@ public class PanelEditController implements ITabController {
             }
             break;
         case ALL:
-            selectionEnabled = true;
             // show all pages
             for (String page : pages) {
-                panel.pagesPanel.add(createLabel(page));
+                createPage(page, true);
             }
             break;
         case CROP_ERRORS:
             for (String page : pages) {
                 Book2.PageInfo pi = book.getPageInfo(page);
                 if (pi.cropPosX < 0 || pi.cropPosY < 0) {
-                    panel.pagesPanel.add(createLabel(page));
+                    createPage(page, false);
+                }
+            }
+            break;
+        case ODD:
+            for (String page : pages) {
+                char e = page.charAt(page.length() - 1);
+                if (e % 2 == 1) {
+                    createPage(page, true);
+                }
+            }
+            break;
+        case EVEN:
+            for (String page : pages) {
+                char e = page.charAt(page.length() - 1);
+                if (e % 2 == 0) {
+                    createPage(page, true);
                 }
             }
             break;
@@ -242,10 +353,13 @@ public class PanelEditController implements ITabController {
             for (String page : pages) {
                 Book2.PageInfo pi = book.getPageInfo(page);
                 if (pi.tags.contains(DataStorage.viewTag)) {
-                    panel.pagesPanel.add(createLabel(page));
+                    createPage(page, false);
                 }
             }
             break;
+        }
+        for (int i = 0; i < panel.pagesPanel.getComponentCount(); i++) {
+            panel.pagesPanel.getComponent(i).addKeyListener(KEY_LISTENER);
         }
 
         resize();
@@ -255,88 +369,10 @@ public class PanelEditController implements ITabController {
         return panel;
     }
 
-    JLabel createLabel(String page) {
-        JLabel pageLabel = new JLabel(Book2.simplifyPageNumber(page));
-        pageLabel.setName(page);
-        previewer.setPreview(page, new IPagePreviewChanged() {
-            @Override
-            public void show(Image image) {
-                pageLabel.setIcon(new ImageIcon(image));
-            }
-        });
-        pageLabel.setBorder(borderNone);
-        pageLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-        pageLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-        pageLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    switch (e.getClickCount()) {
-                    case 1:
-                        if (selectionEnabled) {
-                            pageLabel.requestFocusInWindow();
-                            if (e.isShiftDown()) {
-                                startSelection = currentSelection;
-                            } else {
-                                startSelection = null;
-                            }
-                        }
-                        break;
-                    case 2:
-                        EditPageController.show(PanelEditController.this, pageLabel.getName());
-                        break;
-                    }
-                }
-                if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
-                    if (selectionEnabled && currentSelection != null) {
-                        new PagePopupMenu(PanelEditController.this, startSelection, currentSelection)
-                                .show(pageLabel, e.getX(), e.getY());
-                    }
-                }
-            }
-        });
-
-        if (selectionEnabled) {
-            pageLabel.setFocusable(true);
-            pageLabel.addFocusListener(new FocusListener() {
-
-                @Override
-                public void focusLost(FocusEvent e) {
-                }
-
-                @Override
-                public void focusGained(FocusEvent e) {
-                    currentSelection = pageLabel.getName();
-                    markSelected(startSelection, currentSelection);
-                    pageLabel.setBorder(borderFocused);
-                }
-            });
-        }
-        return pageLabel;
-    }
-
-    void markSelected(String fromPage, String toPage) {
-        for (int i = 0; i < panel.pagesPanel.getComponentCount(); i++) {
-            JLabel c = (JLabel) panel.pagesPanel.getComponent(i);
-            c.setBorder(borderNone);
-        }
-        if (fromPage == null || toPage == null) {
-            return;
-        }
-        if (fromPage.compareTo(toPage) > 0) {
-            String s = fromPage;
-            fromPage = toPage;
-            toPage = s;
-        }
-        for (int i = 0; i < panel.pagesPanel.getComponentCount(); i++) {
-            JLabel c = (JLabel) panel.pagesPanel.getComponent(i);
-            if (fromPage.compareTo(c.getName()) <= 0) {
-                c.setBorder(borderSelected);
-            }
-            if (c.getName().equals(toPage)) {
-                break;
-            }
-        }
+    PageComponent createPage(String page, boolean selectionEnabled) {
+        PageComponent p = new PageComponent(page, this, selectionEnabled);
+        panel.pagesPanel.add(p);
+        return p;
     }
 
     void resize() {
@@ -347,7 +383,10 @@ public class PanelEditController implements ITabController {
             perRow = 1;
         }
         layout.setColumns(perRow);
-        layout.setRows((panel.pagesPanel.getComponentCount() + perRow - 1) / perRow);
         panel.pagesPanel.revalidate();
+    }
+
+    String getPageByIndex(int index) {
+        return ((PageComponent) panel.pagesPanel.getComponent(index)).getName();
     }
 }

@@ -46,8 +46,8 @@ public class MainFrame extends javax.swing.JFrame {
 
         viewButtonsGroup = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
+        progress = new javax.swing.JProgressBar();
         cbProcess = new javax.swing.JCheckBox();
-        jPanel2 = new javax.swing.JPanel();
         tabs = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         workMenu = new javax.swing.JMenu();
@@ -61,6 +61,8 @@ public class MainFrame extends javax.swing.JFrame {
         itemAll = new javax.swing.JRadioButtonMenuItem();
         itemSeq = new javax.swing.JRadioButtonMenuItem();
         itemCropErr = new javax.swing.JRadioButtonMenuItem();
+        itemOdd = new javax.swing.JRadioButtonMenuItem();
+        itemEven = new javax.swing.JRadioButtonMenuItem();
         cameraMenu = new javax.swing.JMenu();
         cameraInit = new javax.swing.JMenuItem();
         cameraFocus = new javax.swing.JMenuItem();
@@ -72,18 +74,21 @@ public class MainFrame extends javax.swing.JFrame {
         setTitle(Messages.getString("FRAME_TITLE")); // NOI18N
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
+        jPanel1.add(progress, gridBagConstraints);
 
         cbProcess.setSelected(true);
         cbProcess.setText(Messages.getString("PANEL_EDIT_PROCESS")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
         jPanel1.add(cbProcess, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.weightx = 1.0;
-        jPanel1.add(jPanel2, gridBagConstraints);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
         getContentPane().add(tabs, java.awt.BorderLayout.CENTER);
@@ -125,6 +130,14 @@ public class MainFrame extends javax.swing.JFrame {
         viewButtonsGroup.add(itemCropErr);
         itemCropErr.setText(Messages.getString("MENU_VIEW_CROP_ERRORS")); // NOI18N
         viewMenu.add(itemCropErr);
+
+        viewButtonsGroup.add(itemOdd);
+        itemOdd.setText(Messages.getString("MENU_VIEW_ODD")); // NOI18N
+        viewMenu.add(itemOdd);
+
+        viewButtonsGroup.add(itemEven);
+        itemEven.setText(Messages.getString("MENU_VIEW_EVEN")); // NOI18N
+        viewMenu.add(itemEven);
 
         jMenuBar1.add(viewMenu);
 
@@ -194,14 +207,16 @@ public class MainFrame extends javax.swing.JFrame {
     public javax.swing.JMenuItem closeBook;
     public javax.swing.JRadioButtonMenuItem itemAll;
     public javax.swing.JRadioButtonMenuItem itemCropErr;
+    public javax.swing.JRadioButtonMenuItem itemEven;
+    public javax.swing.JRadioButtonMenuItem itemOdd;
     public javax.swing.JRadioButtonMenuItem itemSeq;
     public javax.swing.JMenuBar jMenuBar1;
     public javax.swing.JPanel jPanel1;
-    public javax.swing.JPanel jPanel2;
     public javax.swing.JPopupMenu.Separator jSeparator1;
     public javax.swing.JPopupMenu.Separator jSeparator2;
     public javax.swing.JMenuItem processAdd;
     public javax.swing.JMenuItem processScan;
+    public javax.swing.JProgressBar progress;
     public javax.swing.JTabbedPane tabs;
     public javax.swing.JMenuItem toolsPedal;
     public javax.swing.ButtonGroup viewButtonsGroup;

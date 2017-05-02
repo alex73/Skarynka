@@ -68,13 +68,15 @@ public class EditPageController {
     private EditPageDialog dialog;
     private final PanelEditController bookController;
     private final Book2 book;
+    private final List<String> pages;
     private String page;
     private Dimension fullImageSize;
 
-    public EditPageController(PanelEditController bookController, String pageNumber) {
+    public EditPageController(PanelEditController bookController, List<String> pages, String currentPageNumber) {
         this.bookController=bookController;
         this.book=bookController.getBook();
-        page = Book2.formatPageNumber(pageNumber);
+        this.pages = pages;
+        page = Book2.formatPageNumber(currentPageNumber);
         Book2.PageInfo pi = book.getPageInfo(page);
         dialog = new EditPageDialog(DataStorage.mainFrame, true);
         fullImageSize = new Dimension(pi.imageSizeX, pi.imageSizeY);
@@ -85,7 +87,7 @@ public class EditPageController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int c = 0;
-                for (String page : book.listPages()) {
+                for (String page : pages) {
                     Book2.PageInfo pi = book.getPageInfo(page);
                     if (pi.cropPosX > 0 && pi.cropPosY > 0) {
                         c++;
@@ -96,7 +98,7 @@ public class EditPageController {
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.OK_OPTION) {
                     return;
                 }
-                for (String page : book.listPages()) {
+                for (String page : pages) {
                     Book2.PageInfo pi = book.getPageInfo(page);
                     pi.cropPosX = -1;
                     pi.cropPosY = -1;
@@ -171,7 +173,6 @@ public class EditPageController {
         @Override
         public void actionPerformed(ActionEvent e) {
             bookSave();
-            List<String> pages = book.listPages();
             int pos = pages.indexOf(page);
             if (pos >= 0 && pos > 0) {
                 page = Book2.formatPageNumber(pages.get(pos - 1));
@@ -184,7 +185,6 @@ public class EditPageController {
         @Override
         public void actionPerformed(ActionEvent e) {
             bookSave();
-            List<String> pages = book.listPages();
             int pos = pages.indexOf(page);
             if (pos >= 0 && pos < pages.size() - 1) {
                 page = Book2.formatPageNumber(pages.get(pos + 1));
@@ -284,15 +284,14 @@ public class EditPageController {
         dialog.preview.repaint();
     }
 
-    public static void show(PanelEditController bookController, String page) {
-        new EditPageController(bookController, page).dialog.setVisible(true);
+    public static void show(PanelEditController bookController, List<String> pages, String page) {
+        new EditPageController(bookController, pages, page).dialog.setVisible(true);
     }
 
     void showPage() {
         try {
             dialog.pageLabel.setText(Messages.getString("PAGE_NUMBER", Book2.simplifyPageNumber(page)));
 
-            List<String> pages = book.listPages();
             dialog.btnNext.setEnabled(pages.size() > 0 && !pages.get(pages.size() - 1).equals(this.page));
             dialog.btnPrev.setEnabled(pages.size() > 0 && !pages.get(0).equals(this.page));
 
