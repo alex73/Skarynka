@@ -113,6 +113,14 @@ public class EditPageController {
                 currentRectMode = dialog.btnPos.isSelected() ? RECT_MODE.POS : null;
             }
         });
+        dialog.btnPosAll.addActionListener((e) -> {
+            Book2.PageInfo pic = book.getPageInfo(page);
+            for(String p:pages) {
+                Book2.PageInfo pis = book.getPageInfo(p);
+                pis.cropPosX=pic.cropPosX;
+                pis.cropPosY=pic.cropPosY;
+            }
+        });
         // dialog.cbColor.addActionListener(actionColor);
         // dialog.cbEdit.addActionListener(actionEdit);
         dialog.addWindowListener(new WindowAdapter() {
@@ -296,6 +304,7 @@ public class EditPageController {
             dialog.btnPrev.setEnabled(pages.size() > 0 && !pages.get(0).equals(this.page));
 
             Book2.PageInfo pi = book.getPageInfo(page);
+            fullImageSize = new Dimension(pi.imageSizeX, pi.imageSizeY);
             if (pi.cropPosX < 0 && pi.cropPosY < 0) {
                 // not defined yet
                 String prevPage = Book2.incPage(page, -book.pageStep);

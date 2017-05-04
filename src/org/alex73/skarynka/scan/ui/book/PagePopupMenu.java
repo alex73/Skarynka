@@ -43,6 +43,7 @@ import org.alex73.skarynka.scan.Book2.PageInfo;
 import org.alex73.skarynka.scan.ui.page.EditPageController;
 import org.alex73.skarynka.scan.DataStorage;
 import org.alex73.skarynka.scan.Messages;
+import org.alex73.skarynka.scan.process.PageFileInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,10 @@ public class PagePopupMenu extends JPopupMenu {
         JMenuItem p1 = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_P1"));
         JMenuItem ma = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_MA"));
         JMenuItem pa = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_PA"));
+        JMenuItem m2 = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_M2"));
+        JMenuItem p2 = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_P2"));
+        JMenuItem mb = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_MB"));
+        JMenuItem pb = new JMenuItem(Messages.getString("PAGE_POPUP_CHANGE_PB"));
 
         JMenuItem editSelected = new JMenuItem(Messages.getString("PAGE_POPUP_EDIT_SELECTED"));
         editSelected.addActionListener(editSelectedAction);
@@ -101,6 +106,10 @@ public class PagePopupMenu extends JPopupMenu {
         new MoveActionListener(false, 1, p1);
         new MoveActionListener(true, -1, ma);
         new MoveActionListener(true, 1, pa);
+        new MoveActionListener(false, -2, m2);
+        new MoveActionListener(false, 2, p2);
+        new MoveActionListener(true, -2, mb);
+        new MoveActionListener(true, 2, pb);
 
         add(editSelected);
         add(rotateLeft);
@@ -110,6 +119,10 @@ public class PagePopupMenu extends JPopupMenu {
         add(p1);
         add(ma);
         add(pa);
+        add(m2);
+        add(p2);
+        add(mb);
+        add(pb);
         add(remove);
     }
 
@@ -160,9 +173,10 @@ public class PagePopupMenu extends JPopupMenu {
                 List<String> pagesList = book.listPages();
                 for (String p : pagesList) {
                     if (selectedPages.contains(p)) {
+                        PageFileInfo pfi=new PageFileInfo(book, p);
                         book.removePage(p);
-                        File jpg = new File(book.getBookDir(), p + ".jpg");
-                        File raw = new File(book.getBookDir(), p + ".raw");
+                        File jpg = pfi.getPreviewFile();
+                        File raw = pfi.getOriginalFile();
                         if (jpg.exists() && !jpg.delete()) {
                             throw new Exception(Messages.getString("PAGE_POPUP_ERROR_REMOVE", p));
                         }
@@ -280,17 +294,19 @@ public class PagePopupMenu extends JPopupMenu {
             String oldPage = selectedPages.get(0);
             LOG.info("Rename page " + oldPage + " to " + newPage);
             try {
+                PageFileInfo pfi=new PageFileInfo(book, oldPage);
                 PageInfo pi = book.removePage(oldPage);
                 if (pi == null) {
                     throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
                 }
                 pi.pageNumber = newPage;
                 book.addPage(pi);
+                PageFileInfo pfo=new PageFileInfo(book, newPage);
 
-                File jpg = new File(book.getBookDir(), oldPage + ".jpg");
-                File raw = new File(book.getBookDir(), oldPage + ".raw");
-                File newJpg = new File(book.getBookDir(), newPage + ".jpg");
-                File newRaw = new File(book.getBookDir(), newPage + ".raw");
+                File jpg = pfi.getPreviewFile();
+                File raw = pfi.getOriginalFile();
+                File newJpg = pfo.getPreviewFile();
+                File newRaw = pfo.getOriginalFile();
                 if (!jpg.renameTo(newJpg)) {
                     throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
                 }
@@ -337,18 +353,21 @@ public class PagePopupMenu extends JPopupMenu {
                 tempDir.mkdirs();
 
                 Map<String, PageInfo> movedPages = new TreeMap<>();
+                Map<String, PageFileInfo> movedPageFiles = new TreeMap<>();
                 List<String> pagesList = book.listPages();
 
                 for (String p : pagesList) {
                     if (selectedPages.contains(p)) {
-                        File jpg = new File(book.getBookDir(), p + ".jpg");
-                        File raw = new File(book.getBookDir(), p + ".raw");
-                        File tempJpg = new File(tempDir, p + ".jpg");
-                        File tempRaw = new File(tempDir, p + ".raw");
-                        if (!jpg.renameTo(tempJpg)) {
+                        PageFileInfo pfi=new PageFileInfo(book, p);
+                        movedPageFiles.put(p, pfi);
+                        File preview = pfi.getPreviewFile();
+                        File orig = pfi.getOriginalFile();
+                        File tempPreview = new File(tempDir, preview.getName());
+                        File tempOrig = new File(tempDir, orig.getName());
+                        if (!preview.renameTo(tempPreview)) {
                             throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", p));
                         }
-                        if (!raw.renameTo(tempRaw)) {
+                        if (!orig.renameTo(tempOrig)) {
                             throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", p));
                         }
                     }
@@ -368,17 +387,19 @@ public class PagePopupMenu extends JPopupMenu {
                 book.save();
 
                 for (String p : movedPages.keySet()) {
-                    File tempJpg = new File(tempDir, p + ".jpg");
-                    File tempRaw = new File(tempDir, p + ".raw");
+                    PageFileInfo pfi=movedPageFiles.get(p);
+                    File tempPreview = new File(tempDir, pfi.getPreviewFile().getName());
+                    File tempOrig = new File(tempDir, pfi.getOriginalFile().getName());
 
                     String newPage = Book2.incPagePos(p, letter, count);
+                    PageFileInfo pfo=new PageFileInfo(book, newPage);
 
-                    File jpg = new File(book.getBookDir(), newPage + ".jpg");
-                    File raw = new File(book.getBookDir(), newPage + ".raw");
-                    if (!tempJpg.renameTo(jpg)) {
+                    File preview = pfo.getPreviewFile();
+                    File orig = pfo.getOriginalFile();
+                    if (!tempPreview.renameTo(preview)) {
                         throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", p));
                     }
-                    if (!tempRaw.renameTo(raw)) {
+                    if (!tempOrig.renameTo(orig)) {
                         throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", p));
                     }
                 }

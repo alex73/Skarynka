@@ -19,13 +19,15 @@ public class SelectionController {
 
     void reset() {
         selected.clear();
+        start = -1;
+        end = -1;
     }
 
     void clear() {
         for (int i : selected) {
             repaint(i);
         }
-        selected.clear();
+        reset();
     }
 
     void setStart(int index) {

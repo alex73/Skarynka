@@ -38,9 +38,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 
 import org.alex73.skarynka.scan.Book2;
@@ -143,7 +145,21 @@ public class PanelEditController implements ITabController {
                 break;
             case KeyEvent.VK_A:
                 if (e.isControlDown()) {
-                    selection.addSelectionInterval(0, panel.pagesPanel.getComponentCount());
+                    selection.addSelectionInterval(0, panel.pagesPanel.getComponentCount() - 1);
+                    e.consume();
+                }
+                break;
+            case KeyEvent.VK_END:
+                if (e.isShiftDown()) {
+                    p = getPointByIndex(panel.pagesPanel.getComponentCount() - 1);
+                    moved=true;
+                    e.consume();
+                }
+                break;
+            case KeyEvent.VK_HOME:
+                if (e.isShiftDown()) {
+                    p = getPointByIndex(0);
+                    moved=true;
                     e.consume();
                 }
                 break;
@@ -157,7 +173,8 @@ public class PanelEditController implements ITabController {
                     }
                     selection.setEnd(getPointIndex(p));
                     if (c != null) {
-                        c.scrollRectToVisible(c.getBounds());
+                        System.out.println(c.getBounds());
+                        ((JComponent)c.getParent()).scrollRectToVisible(c.getBounds());
                     }
                 }
                 e.consume();
@@ -176,11 +193,8 @@ public class PanelEditController implements ITabController {
         if (idx < 0) {
             return null;
         }
-        GridLayout grid = (GridLayout) panel.pagesPanel.getLayout();
-        Point r = new Point();
-        r.x = idx % grid.getColumns();
-        r.y = idx / grid.getColumns();
-        return r;
+        
+        return getPointByIndex(idx);
     }
 
     int getPointIndex(Point p) {
@@ -188,6 +202,13 @@ public class PanelEditController implements ITabController {
         return p.x + grid.getColumns() * p.y;
     }
 
+    Point getPointByIndex(int idx) {
+        GridLayout grid = (GridLayout) panel.pagesPanel.getLayout();
+        Point r = new Point();
+        r.x = idx % grid.getColumns();
+        r.y = idx / grid.getColumns();
+        return r;
+    }
     PageComponent setFocusPosition(Point p) {
         int idx = getPointIndex(p);
         if (idx >= 0 && idx < panel.pagesPanel.getComponentCount()) {

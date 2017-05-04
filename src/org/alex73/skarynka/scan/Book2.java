@@ -83,7 +83,8 @@ public class Book2 {
     public transient boolean local;
     private transient String localFor;
 
-    public int scale = 100, dpi = 100;
+    public int scale = 100;
+    public int dpi = 300;
     public int zoom;
     public int cropSizeX = -1, cropSizeY = -1;
     public int pageStep = 2;

@@ -47,6 +47,7 @@ public class EditPageDialog extends javax.swing.JDialog {
 
         btnSize = new javax.swing.JButton();
         btnPos = new javax.swing.JToggleButton();
+        btnPosAll = new javax.swing.JButton();
         preview = new org.alex73.skarynka.scan.common.ImageViewPane();
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
@@ -74,6 +75,14 @@ public class EditPageDialog extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         getContentPane().add(btnPos, gridBagConstraints);
+
+        btnPosAll.setText(Messages.getString("PAGE_SET_POS_FOR_ALL")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        getContentPane().add(btnPosAll, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -121,7 +130,7 @@ public class EditPageDialog extends javax.swing.JDialog {
         getContentPane().add(jPanel1, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         getContentPane().add(tags, gridBagConstraints);
@@ -174,6 +183,7 @@ public class EditPageDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnNext;
     public javax.swing.JToggleButton btnPos;
+    public javax.swing.JButton btnPosAll;
     public javax.swing.JButton btnPrev;
     public javax.swing.JButton btnSize;
     public javax.swing.JLabel errLabel;
