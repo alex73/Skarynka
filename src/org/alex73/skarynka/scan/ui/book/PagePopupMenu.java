@@ -410,6 +410,7 @@ public class PagePopupMenu extends JPopupMenu {
                 JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
             }
+            controller.resetAllPreviews();
             controller.show();
         }
     }

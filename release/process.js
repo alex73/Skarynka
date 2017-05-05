@@ -138,8 +138,8 @@ function exist_pdfnocrop() {
   return exist_pdf();
 }
 function execute_pdfnocrop() {
-  cmd.exec('${settings.path_convert} ${page.originalPageFile} '+rotate(page)+' '+scale(book)+' -strip temp/${page.number}.tif');
-  cmd.exec('${settings.path_opj} -i temp/${page.number}.tif -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} '+rotate(page)+' '+scale(book)+' -strip temp/${page.number}.pnm');
+  cmd.exec('${settings.path_opj} -i temp/${page.number}.pnm -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
 }
 function bookexist_pdfnocrop() {
   return bookexist_pdf();
