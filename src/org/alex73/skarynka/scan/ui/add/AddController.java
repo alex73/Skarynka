@@ -55,17 +55,19 @@ public class AddController {
         int returnVal = fc.showOpenDialog(DataStorage.mainFrame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             currentDir = fc.getCurrentDirectory();
-            new LongProcess(panelController, fc.getSelectedFiles()).execute();
+            LongProcess process = new LongProcess(panelController, fc.getSelectedFiles());
+            process.execute();
+            process.showDialog();
         }
     }
 
     /** Show glass pane. */
-    protected static void showProgress() {
+    protected static void showGlassPane() {
         ((RootPaneContainer) DataStorage.mainFrame).getGlassPane().setVisible(true);
     }
 
     /** Hide glass pane. */
-    protected static void hideProgress() {
+    protected static void hideGlassPane() {
         ((RootPaneContainer) DataStorage.mainFrame).getGlassPane().setVisible(false);
     }
 
@@ -75,20 +77,29 @@ public class AddController {
     public static class LongProcess extends SwingWorker<Void, Void> {
         private final PanelEditController panelController;
         private final File[] files;
+        private final AddPages dialog;
+        private boolean stop;
 
         public LongProcess(PanelEditController panelController, File[] files) {
             this.panelController = panelController;
             this.files = files;
-            showProgress();
+            dialog = new AddPages(DataStorage.mainFrame, true);
+            dialog.btnCancel.addActionListener(e -> {
+                stop = true;
+            });
+            dialog.setLocationRelativeTo(DataStorage.mainFrame);
         }
 
+        public void showDialog() {
+            dialog.setVisible(true);
+        }
         @Override
         protected Void doInBackground() throws Exception {
 
             String[] pages = new String[files.length];
 
-            DataStorage.mainFrame.progress.setMaximum(files.length);
-            DataStorage.mainFrame.progress.setValue(0);
+            dialog.progress.setMaximum(files.length);
+            dialog.progress.setValue(0);
 
             String nextPage;
             List<String> ps = panelController.getBook().listPages();
@@ -111,7 +122,11 @@ public class AddController {
                 }
             }
             for (int i = 0; i < files.length; i++) {
+                if (stop) {
+                    throw new InterruptedException("Спынена");
+                }
                 String fn = files[i].getName();
+                dialog.text.setText(Messages.getString("DIALOG_ADDPAGE_TEXT", fn));
                 String ext = fn.substring(fn.lastIndexOf('.') + 1).toLowerCase();
                 File fo = new File(panelController.getBook().getBookDir(), pages[i] + '.' + ext);
 
@@ -133,9 +148,10 @@ public class AddController {
                 }
                 panelController.getBook().addPage(pi);
                 ProcessDaemon.createPreviewIfNeed(panelController.getBook(), pages[i]);
-                DataStorage.mainFrame.progress.setValue(i + 1);
+                dialog.progress.setValue(i + 1);
             }
 
+            panelController.getBook().save();
             return null;
         }
 
@@ -155,7 +171,7 @@ public class AddController {
                 JOptionPane.showMessageDialog(DataStorage.mainFrame, "Error: " + ex.getMessage(), "Памылка",
                         JOptionPane.ERROR_MESSAGE);
             }
-            hideProgress();
+            dialog.dispose();
             panelController.show();
         }
     }

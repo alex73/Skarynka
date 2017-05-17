@@ -121,7 +121,8 @@ function exist_pdf() {
   return cmd.fileExist('temp/'+page.number+'.jp2');
 }
 function execute_pdf() {
-  cmd.exec('${settings.path_convert} ${page.originalPageFile} -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY} '+rotate(page)+' '+scale(book)+' -level 50%,100% -strip temp/${page.number}.tif');
+  var levels = page.tags.level_50_100 ? " -level 50%,100% ": "";
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY} '+rotate(page)+' '+scale(book)+levels+' -strip temp/${page.number}.tif');
   cmd.exec('${settings.path_opj} -i temp/${page.number}.tif -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
 }
 function bookexist_pdf() {
@@ -138,7 +139,8 @@ function exist_pdfnocrop() {
   return exist_pdf();
 }
 function execute_pdfnocrop() {
-  cmd.exec('${settings.path_convert} ${page.originalPageFile} '+rotate(page)+' '+scale(book)+' -strip temp/${page.number}.pnm');
+  var levels = page.tags.level_50_100 ? " -level 50%,100% ": "";
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} '+rotate(page)+' '+scale(book)+levels+' -strip temp/${page.number}.pnm');
   cmd.exec('${settings.path_opj} -i temp/${page.number}.pnm -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
 }
 function bookexist_pdfnocrop() {

@@ -42,7 +42,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 
 import org.alex73.skarynka.scan.Book2;
@@ -64,7 +63,7 @@ public class PanelEditController implements ITabController {
     private static Logger LOG = LoggerFactory.getLogger(PanelEditController.class);
 
     private final Book2 book;
-    private final PanelEdit panel;
+    protected final PanelEdit panel;
     protected final ImageViewPane previewPage;
 
     protected SelectionController selection;

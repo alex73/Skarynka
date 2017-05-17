@@ -39,6 +39,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import org.alex73.skarynka.scan.Book2;
+import org.alex73.skarynka.scan.Context;
 import org.alex73.skarynka.scan.Book2.PageInfo;
 import org.alex73.skarynka.scan.ui.page.EditPageController;
 import org.alex73.skarynka.scan.DataStorage;
@@ -124,6 +125,17 @@ public class PagePopupMenu extends JPopupMenu {
         add(mb);
         add(pb);
         add(remove);
+
+        for (Map.Entry<String, String> en : Context.getPageTags().entrySet()) {
+            JMenuItem add = new JMenuItem(Messages.getString("PAGE_POPUP_ADD_TAG", en.getValue()));
+            add.addActionListener(new TagActionListener(en.getKey(), true));
+            add(add);
+        }
+        for (Map.Entry<String, String> en : Context.getPageTags().entrySet()) {
+            JMenuItem rem = new JMenuItem(Messages.getString("PAGE_POPUP_REMOVE_TAG", en.getValue()));
+            rem.addActionListener(new TagActionListener(en.getKey(), false));
+            add(rem);
+        }
     }
 
     boolean isMovePossible(boolean letter, int count) {
@@ -214,6 +226,7 @@ public class PagePopupMenu extends JPopupMenu {
                 dialog.dispose();
             }
         });
+        dialog.getRootPane().setDefaultButton(dialog.renameButton);
 
         dialog.txtNumber.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -323,6 +336,29 @@ public class PagePopupMenu extends JPopupMenu {
             controller.show();
         }
     };
+
+    class TagActionListener implements ActionListener {
+        private final String tag;
+        private final boolean add;
+        public TagActionListener(String tag, boolean add) {
+            this.tag=tag;
+            this.add=add;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (String p : book.listPages()) {
+                if (selectedPages.contains(p)) {
+                    PageInfo pi = book.getPageInfo(p);
+                    if (add) {
+                        pi.tags.add(tag);
+                    } else {
+                        pi.tags.remove(tag);
+                    }
+                }
+            }
+        }
+    }
 
     class MoveActionListener implements ActionListener {
         private final boolean letter;

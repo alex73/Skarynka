@@ -95,7 +95,7 @@
     <page-tags>
         <!-- All possible tags for pages -->
         <tag name="foredit" title="рэдагаваць" />
-        <!-- tag name="color" title="каляровая" /-->
+        <tag name="level_50_100" title="цямнейшая" />
     </page-tags>
 
     <process-commands>

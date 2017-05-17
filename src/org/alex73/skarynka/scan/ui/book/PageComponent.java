@@ -86,6 +86,7 @@ public class PageComponent extends JLabel {
                     controller.previewPage.setRotation(pi.rotate);
                     controller.previewPage.setCropRectangle(new Rectangle(pi.cropPosX, pi.cropPosY,
                             controller.getBook().cropSizeX, controller.getBook().cropSizeY), fullImageSize);
+                    controller.panel.previewTags.setText(pi.tags.toString());
                     try {
                         controller.previewPage.displayImage(controller.getBook().getImage(getName()), 1, 1);
                     } catch (Exception ex) {

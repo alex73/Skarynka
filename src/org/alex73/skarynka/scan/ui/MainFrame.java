@@ -42,11 +42,9 @@ public class MainFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         viewButtonsGroup = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
-        progress = new javax.swing.JProgressBar();
         cbProcess = new javax.swing.JCheckBox();
         tabs = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -73,22 +71,11 @@ public class MainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(Messages.getString("FRAME_TITLE")); // NOI18N
 
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
-        jPanel1.add(progress, gridBagConstraints);
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         cbProcess.setSelected(true);
         cbProcess.setText(Messages.getString("PANEL_EDIT_PROCESS")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
-        jPanel1.add(cbProcess, gridBagConstraints);
+        jPanel1.add(cbProcess);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
         getContentPane().add(tabs, java.awt.BorderLayout.CENTER);
@@ -216,7 +203,6 @@ public class MainFrame extends javax.swing.JFrame {
     public javax.swing.JPopupMenu.Separator jSeparator2;
     public javax.swing.JMenuItem processAdd;
     public javax.swing.JMenuItem processScan;
-    public javax.swing.JProgressBar progress;
     public javax.swing.JTabbedPane tabs;
     public javax.swing.JMenuItem toolsPedal;
     public javax.swing.ButtonGroup viewButtonsGroup;
