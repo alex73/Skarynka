@@ -96,6 +96,11 @@ public class CHDKCameras implements ISourceDevice {
     }
 
     @Override
+    public String getScannedFileExt() {
+        return "raw";
+    }
+
+    @Override
     public String[] scan(String... pathsToOutput) throws Exception {
         LOG.info("Scan to " + Arrays.toString(pathsToOutput));
         long be=System.currentTimeMillis();

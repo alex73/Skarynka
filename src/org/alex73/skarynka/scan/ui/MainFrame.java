@@ -67,6 +67,8 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         cameraBadPixels = new javax.swing.JMenuItem();
         toolsPedal = new javax.swing.JMenuItem();
+        toolsMenu = new javax.swing.JMenu();
+        addAllFiles = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(Messages.getString("FRAME_TITLE")); // NOI18N
@@ -128,7 +130,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuBar1.add(viewMenu);
 
-        cameraMenu.setText(Messages.getString("MENU_TOOLS")); // NOI18N
+        cameraMenu.setText(Messages.getString("MENU_DEVICES")); // NOI18N
 
         cameraInit.setText(Messages.getString("MENU_TOOLS_CAMERA_INIT")); // NOI18N
         cameraMenu.add(cameraInit);
@@ -144,6 +146,13 @@ public class MainFrame extends javax.swing.JFrame {
         cameraMenu.add(toolsPedal);
 
         jMenuBar1.add(cameraMenu);
+
+        toolsMenu.setText(Messages.getString("MENU_TOOLS")); // NOI18N
+
+        addAllFiles.setText(Messages.getString("MENU_ADD_ALL")); // NOI18N
+        toolsMenu.add(addAllFiles);
+
+        jMenuBar1.add(toolsMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -186,6 +195,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JMenuItem addAllFiles;
     public javax.swing.JMenuItem cameraBadPixels;
     public javax.swing.JMenuItem cameraFocus;
     public javax.swing.JMenuItem cameraInit;
@@ -204,6 +214,7 @@ public class MainFrame extends javax.swing.JFrame {
     public javax.swing.JMenuItem processAdd;
     public javax.swing.JMenuItem processScan;
     public javax.swing.JTabbedPane tabs;
+    public javax.swing.JMenu toolsMenu;
     public javax.swing.JMenuItem toolsPedal;
     public javax.swing.ButtonGroup viewButtonsGroup;
     public javax.swing.JMenuItem viewDec;

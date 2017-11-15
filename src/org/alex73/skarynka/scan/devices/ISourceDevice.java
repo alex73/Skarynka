@@ -45,6 +45,8 @@ public interface ISourceDevice {
      */
     String[] scan(String... pathsToOutput) throws Exception;
 
+    String getScannedFileExt();
+
     /**
      * Get device status text.
      */

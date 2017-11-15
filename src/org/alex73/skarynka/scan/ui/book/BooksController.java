@@ -367,7 +367,7 @@ public class BooksController implements ITabController {
     DocumentFilter bookNameFilter = new DocumentFilter() {
 
         protected String check(String data) {
-            return RE_NAME.matcher(data).matches() ? data.toLowerCase() : null;
+            return RE_NAME.matcher(data).matches() ? data : null;
         }
 
         @Override

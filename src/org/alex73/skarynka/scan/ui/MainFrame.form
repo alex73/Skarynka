@@ -124,7 +124,7 @@
         <Menu class="javax.swing.JMenu" name="cameraMenu">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_TOOLS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_DEVICES" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <SubComponents>
@@ -155,6 +155,22 @@
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_TOOLS_PEDAL_TEST" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="toolsMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_TOOLS" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="addAllFiles">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/alex73/skarynka/scan/messages.properties" key="MENU_ADD_ALL" replaceFormat="Messages.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </MenuItem>

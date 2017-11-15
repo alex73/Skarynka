@@ -9,6 +9,8 @@
         <param host="scan" id="control-dir">/scan/control</param>
         <param host="zhvir" id="book-dir">/data/Repo-MyShare-Temp/zhvir/books</param>
         <param host="zhvir" id="control-dir">/data/Repo-MyShare-Temp/zhvir/control</param>
+        <param host="kosul" id="book-dir">/data/Repo-Kosul-Temp/Skany-books</param>
+        <param host="kosul" id="control-dir">/data/Repo-Kosul-Temp/Skany-control</param>
 
         <!-- Camera's vendor:product USB IDs. Will not be checked if not defined. Need to declare for be sure that camera 
             settings defined for specific cameras. -->
@@ -87,6 +89,15 @@
         <allow id="ProcessingBooks" value="true" />
         <allow id="ProcessingControls" value="false" />
         <allow id="ShowNonLocalBooks" value="true" />
+        <allow id="BookControl" value="true" />
+        <allow id="ShowDevices" value="false" />
+        <allow id="ShowManualAdd" value="true" />
+    </permissions>
+    <permissions host="kosul">
+        <allow id="CameraBadPixels" value="false" />
+        <allow id="ProcessingBooks" value="false" />
+        <allow id="ProcessingControls" value="false" />
+        <allow id="ShowNonLocalBooks" value="false" />
         <allow id="BookControl" value="true" />
         <allow id="ShowDevices" value="false" />
         <allow id="ShowManualAdd" value="true" />

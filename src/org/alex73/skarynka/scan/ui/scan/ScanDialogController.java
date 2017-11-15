@@ -208,6 +208,7 @@ public class ScanDialogController {
                 pi.camera = camerasIds[0];
                 pi.imageSizeX = imageSize.width;
                 pi.imageSizeY = imageSize.height;
+                pi.pageOriginalFileExt = DataStorage.device.getScannedFileExt();
                 book.addPage(pi);
                 panelController.updatePreview(p1f);
             }
@@ -219,6 +220,7 @@ public class ScanDialogController {
                 pi.camera = camerasIds[1];
                 pi.imageSizeX = imageSize.width;
                 pi.imageSizeY = imageSize.height;
+                pi.pageOriginalFileExt = DataStorage.device.getScannedFileExt();
                 book.addPage(pi);
                 panelController.updatePreview(p2f);
             }

@@ -175,10 +175,10 @@ public class DataStorage {
         Arrays.sort(ls);
         try {
             for (File f : ls) {
-                if (bookNames != null && !bookNames.contains(f.getName().toLowerCase())) {
+                if (bookNames != null && !bookNames.contains(f.getName())) {
                     continue;
                 }
-                PanelEditController c = getOpenBookController(f.getName().toLowerCase());
+                PanelEditController c = getOpenBookController(f.getName());
                 if (c != null) {
                     iterator.onBook(c.getBook());
                 } else {

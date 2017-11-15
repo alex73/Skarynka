@@ -20,6 +20,7 @@
  **************************************************************************/
 package org.alex73.skarynka.scan.ui.book;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -99,7 +100,6 @@ public class PagePopupMenu extends JPopupMenu {
         rotateRight.addActionListener(rotateRightAction);
 
         JMenuItem rename = new JMenuItem(Messages.getString("PAGE_POPUP_RENAME"));
-        rename.setEnabled(selectedIndexes.size() == 1);
 
         rename.addActionListener(renameAction);
         remove.addActionListener(removeAction);
@@ -217,8 +217,9 @@ public class PagePopupMenu extends JPopupMenu {
     String showPageNumberDialog() {
         StringBuilder result = new StringBuilder();
         PageNumber dialog = new PageNumber(DataStorage.mainFrame, true);
-        dialog.setTitle(Messages.getString("PAGE_NUMBER_TITLE", Book2.simplifyPageNumber(selectedPages.get(0))));
-        dialog.errorLabel.setText(" ");
+        dialog.setTitle(Messages.getString("PAGE_NUMBER_TITLE", selectedPages.size(),
+                Book2.simplifyPageNumber(selectedPages.get(0))));
+        dialog.statusLabel.setText(" ");
         dialog.renameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -245,21 +246,34 @@ public class PagePopupMenu extends JPopupMenu {
             }
 
             void check(Document d) {
-                dialog.errorLabel.setText(" ");
+                dialog.statusLabel.setText(" ");
                 try {
                     String newText = d.getText(0, d.getLength()).trim();
                     newText = Book2.formatPageNumber(newText);
                     if (StringUtils.isEmpty(newText)) {
                         dialog.renameButton.setEnabled(false);
-                        dialog.errorLabel.setText(Messages.getString("PAGE_NUMBER_ERROR_WRONG"));
+                        dialog.statusLabel.setText(Messages.getString("PAGE_NUMBER_ERROR_WRONG"));
+                        dialog.statusLabel.setForeground(Color.RED);
                     } else {
-                        Book2.PageInfo pi = book.getPageInfo(newText);
-                        if (pi != null) {
+                        String exist=null;
+                        String testNumber=newText;
+                        for(int i=0;i<selectedPages.size();i++) {
+                            Book2.PageInfo pi = book.getPageInfo(testNumber);
+                            if (pi!=null) {
+                                exist=testNumber;
+                                break;
+                            }
+                            testNumber = Book2.incPage(testNumber, 1);
+                        }
+                        if (exist != null) {
                             dialog.renameButton.setEnabled(false);
-                            dialog.errorLabel.setText(
-                                    Messages.getString("PAGE_NUMBER_ERROR_EXIST", Book2.simplifyPageNumber(newText)));
+                            dialog.statusLabel.setText(
+                                    Messages.getString("PAGE_NUMBER_ERROR_EXIST", Book2.simplifyPageNumber(exist)));
+                            dialog.statusLabel.setForeground(Color.RED);
                         } else {
                             dialog.renameButton.setEnabled(true);
+                            dialog.statusLabel.setText(Messages.getString("PAGE_NUMBER_RESULT",newText,Book2.incPage(testNumber, -1)));
+                            dialog.statusLabel.setForeground(Color.BLACK);
                         }
                     }
                 } catch (BadLocationException ex) {
@@ -304,34 +318,37 @@ public class PagePopupMenu extends JPopupMenu {
             if (StringUtils.isEmpty(newPage)) {
                 return;
             }
-            String oldPage = selectedPages.get(0);
-            LOG.info("Rename page " + oldPage + " to " + newPage);
-            try {
-                PageFileInfo pfi=new PageFileInfo(book, oldPage);
-                PageInfo pi = book.removePage(oldPage);
-                if (pi == null) {
-                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
-                }
-                pi.pageNumber = newPage;
-                book.addPage(pi);
-                PageFileInfo pfo=new PageFileInfo(book, newPage);
+            for (int i = 0; i < selectedPages.size(); i++) {
+                String oldPage = selectedPages.get(i);
+                LOG.info("Rename page from " + oldPage + " to " + newPage);
+                try {
+                    PageFileInfo pfi = new PageFileInfo(book, oldPage);
+                    PageInfo pi = book.removePage(oldPage);
+                    if (pi == null) {
+                        throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
+                    }
+                    pi.pageNumber = newPage;
+                    book.addPage(pi);
+                    PageFileInfo pfo = new PageFileInfo(book, newPage);
 
-                File jpg = pfi.getPreviewFile();
-                File raw = pfi.getOriginalFile();
-                File newJpg = pfo.getPreviewFile();
-                File newRaw = pfo.getOriginalFile();
-                if (!jpg.renameTo(newJpg)) {
-                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
-                }
-                if (!raw.renameTo(newRaw)) {
-                    throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
-                }
+                    File jpg = pfi.getPreviewFile();
+                    File raw = pfi.getOriginalFile();
+                    File newJpg = pfo.getPreviewFile();
+                    File newRaw = pfo.getOriginalFile();
+                    if (!jpg.renameTo(newJpg)) {
+                        throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
+                    }
+                    if (!raw.renameTo(newRaw)) {
+                        throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", oldPage));
+                    }
 
-                book.save();
-            } catch (Throwable ex) {
-                LOG.error("Error rename : ", ex);
-                JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(), "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                    book.save();
+                } catch (Throwable ex) {
+                    LOG.error("Error rename : ", ex);
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(), "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+                newPage=Book2.incPage(newPage, 1);
             }
             controller.show();
         }

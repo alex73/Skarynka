@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Book2 {
     public static final String[] IMAGE_EXTENSIONS = new String[] { "tif", "tiff", "jpg", "jpeg", "png", "bmp" };
+    public static final Pattern RE_PAGE_IMAGE_FILE = Pattern.compile("([0-9]+[a-z]*)\\.(tif|tiff|jpg|jpeg|png|bmp)",
+            Pattern.CASE_INSENSITIVE);
 
     private static Logger LOG = LoggerFactory.getLogger(Book2.class);
 
@@ -66,16 +68,6 @@ public class Book2 {
 
         public PageInfo(String pageNumber) {
             this.pageNumber = pageNumber;
-            for (String ext : Book2.IMAGE_EXTENSIONS) {
-                File f = new File(bookDir, pageNumber + '.' + ext);
-                if (f.exists()) {
-                    pageOriginalFileExt = ext;
-                    break;
-                }
-            }
-            if (pageOriginalFileExt == null) {
-                throw new RuntimeException("Page " + pageNumber + " file not found");
-            }
         }
     }
 
@@ -114,6 +106,12 @@ public class Book2 {
                     String fieldName = m.group(1);
                     String value = m.group(2);
                     set(this, fieldName, value, line);
+                }
+            }
+            for(PageInfo pi:pages.values()) {
+                if (!new PageFileInfo(this, pi.pageNumber).getOriginalFile().exists()) {
+                    throw new RuntimeException(
+                            "Page " + pi.pageNumber + " file not found in the book " + bookDir.getName());
                 }
             }
             if (localFile.exists()) {
@@ -193,7 +191,7 @@ public class Book2 {
     }
 
     public String getName() {
-        return bookDir.getName().toLowerCase();
+        return bookDir.getName();
     }
 
     public File getBookDir() {
@@ -300,7 +298,7 @@ public class Book2 {
         Matcher m = RE_PAGE_NUMBER.matcher(pageNumber);
         if (m.matches()) {
             String n = m.group(1);
-            n = "00000".substring(n.length()) + n + m.group(2).toLowerCase();
+            n = "00000".substring(n.length()) + n + m.group(2);
             return n;
         } else {
             return "";
@@ -321,7 +319,7 @@ public class Book2 {
         }
 
         int n1 = Integer.parseInt(m.group(1));
-        String s1 = m.group(2).toLowerCase();
+        String s1 = m.group(2);
 
         m = RE_PAGE_NUMBER.matcher(p2);
         if (!m.matches()) {
@@ -329,7 +327,7 @@ public class Book2 {
         }
 
         int n2 = Integer.parseInt(m.group(1));
-        String s2 = m.group(2).toLowerCase();
+        String s2 = m.group(2);
 
         if (n1 != n2) {
             return n1 - n2;
@@ -346,7 +344,7 @@ public class Book2 {
             return "";
         }
         int n = Integer.parseInt(m.group(1));
-        String idx = m.group(2).toLowerCase();
+        String idx = m.group(2);
         String r;
         switch (idx.length()) {
         case 0:
@@ -394,7 +392,7 @@ public class Book2 {
         }
         String result;
         int n = Integer.parseInt(m.group(1));
-        String idx = m.group(2).toLowerCase();
+        String idx = m.group(2);
         if (letter) {
             if (idx.isEmpty()) {
                 result = null;

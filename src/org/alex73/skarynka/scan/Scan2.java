@@ -142,6 +142,7 @@ public class Scan2 {
         DataStorage.mainFrame.cameraMenu.setVisible(Context.getPermissions().ShowDevices);
         DataStorage.mainFrame.processScan.setVisible(Context.getPermissions().ShowDevices);
         DataStorage.mainFrame.processAdd.setVisible(Context.getPermissions().ShowManualAdd);
+        DataStorage.mainFrame.addAllFiles.setVisible(Context.getPermissions().ShowManualAdd);
 
         DataStorage.mainFrame.addWindowListener(new WindowAdapter() {
             @Override
@@ -193,6 +194,13 @@ public class Scan2 {
 
             @Override
             public void menuCanceled(MenuEvent e) {
+            }
+        });
+
+        DataStorage.mainFrame.addAllFiles.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AddController.addAll();
             }
         });
 

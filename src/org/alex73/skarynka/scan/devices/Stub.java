@@ -89,6 +89,11 @@ public class Stub implements ISourceDevice {
     }
 
     @Override
+    public String getScannedFileExt() {
+        return "CRW";
+    }
+
+    @Override
     public String[] scan(String... pathsToOutput) throws Exception {
         c++;
         Files.copy(Paths.get("/home/alex/MyShare-Temp/c/c1/" + c + ".JPG"),

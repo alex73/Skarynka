@@ -48,11 +48,12 @@ public class PageNumber extends javax.swing.JDialog {
 
         jLabel1 = new javax.swing.JLabel();
         txtNumber = new javax.swing.JTextField();
-        errorLabel = new javax.swing.JLabel();
+        statusLabel = new javax.swing.JLabel();
         renameButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Messages.getString("PAGE_NUMBER_TITLE")); // NOI18N
+        setPreferredSize(new java.awt.Dimension(333, 130));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText(Messages.getString("PAGE_NUMBER_PROMPT")); // NOI18N
@@ -69,14 +70,14 @@ public class PageNumber extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         getContentPane().add(txtNumber, gridBagConstraints);
 
-        errorLabel.setForeground(new java.awt.Color(255, 0, 0));
-        errorLabel.setText(" error ");
+        statusLabel.setForeground(new java.awt.Color(255, 0, 0));
+        statusLabel.setText(" error ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        getContentPane().add(errorLabel, gridBagConstraints);
+        getContentPane().add(statusLabel, gridBagConstraints);
 
         renameButton.setText(Messages.getString("PAGE_NUMBER_BUTTON")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -132,9 +133,9 @@ public class PageNumber extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JLabel errorLabel;
     public javax.swing.JLabel jLabel1;
     public javax.swing.JButton renameButton;
+    public javax.swing.JLabel statusLabel;
     public javax.swing.JTextField txtNumber;
     // End of variables declaration//GEN-END:variables
 }
