@@ -87,7 +87,7 @@ public class ProcessDaemon extends Thread {
 
     boolean process() throws Exception {
         LOG.debug("check for processing...");
-        if (Context.getPermissions().ProcessingControls) {
+        if (Context.getPermissions().ProcessingControls && Context.getControlDir() != null) {
             // process control files
             LOG.trace("check for control dir " + Context.getControlDir());
             File[] controls = new File(Context.getControlDir()).listFiles(new FileFilter() {
@@ -343,7 +343,7 @@ public class ProcessDaemon extends Thread {
                 cmda = new String[] { "nice", "ionice", "-c3", "sh", "-c", cmdo.toString() };
                 break;
             case WINDOWS:
-                cmda = new String[] { "nice", "cmd.exe", "/c", cmdo.toString() };
+                cmda = new String[] { "cmd.exe", "/c", cmdo.toString() };
                 break;
             default:
                 throw new Exception("Unknown OS");

@@ -234,7 +234,7 @@ public class CameraBadPixelsWizard extends Wizard {
             cmda = new String[] { "nice", "ionice", "-c3", "sh", "-c", cmdo.toString() };
             break;
         case WINDOWS:
-            cmda = new String[] { "nice", "cmd.exe", "/c", cmdo.toString() };
+            cmda = new String[] { "cmd.exe", "/c", cmdo.toString() };
             break;
         default:
             throw new Exception("Unknown OS");
