@@ -181,15 +181,17 @@ public class ImageViewPane extends Component {
                 drawRect.height = -drawRect.height;
                 drawRect.y -= drawRect.height;
             }
-
             if (crop1.x < 0 || crop1.y < 0 || crop2.x > 1 || crop2.y > 1) {
                 // out of real image
                 g2.setColor(Color.YELLOW);
             } else {
                 g2.setColor(Color.RED);
             }
-            g2.drawRect((int) Math.round(drawRect.x), (int) Math.round(drawRect.y),
-                    (int) Math.round(drawRect.width), (int) Math.round(drawRect.height));
+            int x = (int) Math.round(drawRect.x);
+            int y = (int) Math.round(drawRect.y);
+            int w = (int) Math.round(drawRect.width);
+            int h = (int) Math.round(drawRect.height);
+            g2.drawRect(x, y, w, h);
         } catch (Exception ex) {
             LOG.error("Error convert image to mouse coordinates", ex);
         }
@@ -248,12 +250,26 @@ public class ImageViewPane extends Component {
         return at;
     }
 
-    public Point mouseToImage(Point mouse, Dimension fullImageSize) {
+    public Point mouseToImage(Point mouse, int offX, int offY, Dimension fullImageSize) {
         try {
             Point2D p = new Point2D.Double();
-            transform.inverseTransform(mouse, p);
-            return new Point((int) Math.round(p.getX() / imageSize.width * fullImageSize.width),
-                    (int) Math.round(p.getY() / imageSize.height * fullImageSize.height));
+            Point m = new Point(mouse.x - offX, mouse.y - offY);
+            transform.inverseTransform(m, p);
+            int x = (int) Math.round(p.getX() / imageSize.width * fullImageSize.width);
+            int y = (int) Math.round(p.getY() / imageSize.height * fullImageSize.height);
+            if (x < 0) {
+                x = 0;
+            }
+            if (y < 0) {
+                y = 0;
+            }
+            if (x > fullImageSize.width) {
+                x = fullImageSize.width;
+            }
+            if (y > fullImageSize.height) {
+                y = fullImageSize.height;
+            }
+            return new Point(x, y);
         } catch (Exception ex) {
             LOG.error("Error convert mouse to image coordinates", ex);
             return null;

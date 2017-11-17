@@ -153,8 +153,8 @@ public class EditPageController {
         
         
 
-        dialog.preview.addMouseListener(mouseListener);
-        dialog.preview.addMouseMotionListener(mouseMotionListener);
+        dialog.getContentPane().addMouseListener(mouseListener);
+        dialog.getContentPane().addMouseMotionListener(mouseMotionListener);
 
         showPage();
         if (fullImageSize.width == 0 && fullImageSize.height == 0) {
@@ -348,7 +348,8 @@ public class EditPageController {
                 return;
             }
 
-            currentPoint = dialog.preview.mouseToImage(e.getPoint(), fullImageSize);
+            currentPoint = dialog.preview.mouseToImage(e.getPoint(), dialog.preview.getX(), dialog.preview.getY(),
+                    fullImageSize);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Mouse release " + e.getPoint() + " / " + currentPoint);
             }
@@ -362,6 +363,7 @@ public class EditPageController {
                 pi.cropPosX = cropRect.x;
                 pi.cropPosY = cropRect.y;
                 currentRectMode = null;
+                dialog.btnSize.getModel().setSelected(false);
             } else if (currentRectMode == RECT_MODE.POS) {
                 Book2.PageInfo pi = book.getPageInfo(page);
                 pi.cropPosX = cropRect.x;
@@ -376,7 +378,8 @@ public class EditPageController {
             if (currentRectMode == null) {
                 return;
             }
-            currentPoint = dialog.preview.mouseToImage(e.getPoint(), fullImageSize);
+            currentPoint = dialog.preview.mouseToImage(e.getPoint(), dialog.preview.getX(), dialog.preview.getY(),
+                    fullImageSize);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Mouse press " + e.getPoint() + " / " + currentPoint);
             }
@@ -393,7 +396,8 @@ public class EditPageController {
     MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
         public void mouseDragged(MouseEvent e) {
             if (pressedPoint != null) {
-                currentPoint = dialog.preview.mouseToImage(e.getPoint(), fullImageSize);
+                currentPoint = dialog.preview.mouseToImage(e.getPoint(), dialog.preview.getX(), dialog.preview.getY(),
+                        fullImageSize);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Mouse drag " + e.getPoint() + " / " + currentPoint);
                 }
@@ -403,7 +407,8 @@ public class EditPageController {
 
         public void mouseMoved(MouseEvent e) {
             if (pressedPoint != null) {
-                currentPoint = dialog.preview.mouseToImage(e.getPoint(), fullImageSize);
+                currentPoint = dialog.preview.mouseToImage(e.getPoint(), dialog.preview.getX(), dialog.preview.getY(),
+                        fullImageSize);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Mouse move " + e.getPoint() + " / " + currentPoint);
                 }
@@ -416,11 +421,11 @@ public class EditPageController {
         Rectangle rc = new Rectangle();
 
         if (currentRectMode == RECT_MODE.SIZE) {
-            rc.x = (int) Math.round(pressedPoint.getX() / 8) * 8;
-            rc.y = (int) Math.round(pressedPoint.getY() / 8) * 8;
+            rc.x = pressedPoint.x;
+            rc.y = pressedPoint.y;
 
-            rc.width = (int) Math.round((currentPoint.getX() - pressedPoint.getX()) / 8) * 8;
-            rc.height = (int) Math.round((currentPoint.getY() - pressedPoint.getY()) / 8) * 8;
+            rc.width = currentPoint.x - pressedPoint.x;
+            rc.height = currentPoint.y - pressedPoint.y;
 
             if (rc.width < 0) {
                 rc.width = -rc.width;
@@ -431,8 +436,8 @@ public class EditPageController {
                 rc.y -= rc.height;
             }
         } else {
-            rc.x = (int) Math.round((currentPoint.getX() - pressedPoint.getX()) / 8) * 8;
-            rc.y = (int) Math.round((currentPoint.getY() - pressedPoint.getY()) / 8) * 8;
+            rc.x = currentPoint.x - pressedPoint.x;
+            rc.y = currentPoint.y - pressedPoint.y;
             rc.width = book.cropSizeX;
             rc.height = book.cropSizeY;
         }

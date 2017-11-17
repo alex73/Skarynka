@@ -45,7 +45,7 @@ public class EditPageDialog extends javax.swing.JDialog {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        btnSize = new javax.swing.JButton();
+        btnSize = new javax.swing.JToggleButton();
         btnPos = new javax.swing.JToggleButton();
         btnPosAll = new javax.swing.JButton();
         preview = new org.alex73.skarynka.scan.common.ImageViewPane();
@@ -90,6 +90,7 @@ public class EditPageDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(20, 20, 0, 20);
         getContentPane().add(preview, gridBagConstraints);
 
         btnPrev.setText(Messages.getString("PAGE_PREV")); // NOI18N
@@ -185,7 +186,7 @@ public class EditPageDialog extends javax.swing.JDialog {
     public javax.swing.JToggleButton btnPos;
     public javax.swing.JButton btnPosAll;
     public javax.swing.JButton btnPrev;
-    public javax.swing.JButton btnSize;
+    public javax.swing.JToggleButton btnSize;
     public javax.swing.JLabel errLabel;
     public javax.swing.JPanel jPanel1;
     public javax.swing.JLabel pageLabel;
