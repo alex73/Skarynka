@@ -56,7 +56,7 @@ public class AddController {
                 if (pathname.isDirectory()) {
                     return true;
                 }
-                return Book2.RE_PAGE_IMAGE_FILE.matcher(pathname.getName()).matches();
+                return Book2.IMAGE_FILE.matcher(pathname.getName()).matches();
             }
         });
         fc.setAcceptAllFileFilterUsed(false);

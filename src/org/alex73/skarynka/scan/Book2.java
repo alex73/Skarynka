@@ -51,6 +51,8 @@ public class Book2 {
     public static final String[] IMAGE_EXTENSIONS = new String[] { "tif", "tiff", "jpg", "jpeg", "png", "bmp" };
     public static final Pattern RE_PAGE_IMAGE_FILE = Pattern.compile("([0-9]+[a-z]*)\\.(tif|tiff|jpg|jpeg|png|bmp)",
             Pattern.CASE_INSENSITIVE);
+    public static final Pattern IMAGE_FILE = Pattern.compile(".+\\.(tif|tiff|jpg|jpeg|png|bmp)",
+            Pattern.CASE_INSENSITIVE);
 
     private static Logger LOG = LoggerFactory.getLogger(Book2.class);
 
