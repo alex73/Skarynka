@@ -21,48 +21,110 @@
 package org.alex73.skarynka.scan.process.pdf;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Jpeg;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfWriter;
+import org.alex73.skarynka.scan.Book2;
+import org.alex73.skarynka.scan.Book2.PageInfo;
+import org.alex73.skarynka.scan.process.PageFileInfo;
+
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
 
 public class PdfCreator {
 
     public static void create(File outFile, File[] jpegs) throws Exception {
-        Document pdf = new Document();
-        pdf.setMargins(0, 0, 0, 0);
+        PdfWriter writer = new PdfWriter(outFile);
 
-        Image image0 = Jpeg.getInstance(jpegs[0].getPath());
-        pdf.setPageSize(new Rectangle(0, 0, image0.getScaledWidth(), image0.getScaledHeight()));
+        PdfDocument pdf = new PdfDocument(writer);
 
-        PdfWriter writer = PdfWriter.getInstance(pdf, new FileOutputStream(outFile));
+        Document doc = new Document(pdf);
 
-        pdf.open();
-        float minWidth = Float.MAX_VALUE, maxWidth = Float.MIN_VALUE, minHeight = Float.MAX_VALUE,
-                maxHeight = Float.MIN_VALUE;
         for (File jpeg : jpegs) {
+            ImageData imgData = ImageDataFactory.createJpeg(jpeg.toURI().toURL());
+            Image image = new Image(imgData);
+            PageSize ps = new PageSize(image.getImageWidth(), image.getImageHeight());
+            PdfPage page = pdf.addNewPage(ps);
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.addImage(imgData, 0, 0, true);
 
-            Image image = Jpeg.getInstance(jpeg.getPath());
-
-            float width, height;
-
-            width = image.getScaledWidth();
-            height = image.getScaledHeight();
-            minWidth = Math.min(minWidth, width);
-            maxWidth = Math.max(maxWidth, width);
-            minHeight = Math.min(minHeight, height);
-            maxHeight = Math.max(maxHeight, height);
-
-            pdf.setPageSize(new Rectangle(0, 0, width, height));
-            pdf.newPage();
-            pdf.add(image);
         }
 
-        pdf.close();
+        doc.close();
         writer.flush();
         writer.close();
+    }
+
+    private final PdfWriter writer;
+    private final PdfDocument pdf;
+    private final Document doc;
+
+    public PdfCreator(File outFile) throws Exception {
+        writer = new PdfWriter(outFile);
+        pdf = new PdfDocument(writer);
+        doc = new Document(pdf);
+    }
+
+    public void addPage(Book2 book, String pageNum) throws Exception {
+        PageFileInfo fi = new PageFileInfo(book, pageNum);
+        ImageData imgData = ImageDataFactory.create(fi.getOriginalFile().toURI().toURL());
+        PageInfo pi = fi.getPageInfo();
+        if (pi.inverted) {
+            imgData.setDecode(new float[] { 1, 0, 1, 0, 1, 0, 1, 0 });
+        }
+        Image image = new Image(imgData);
+
+        float width = pi.rotate % 2 == 0 ? image.getImageWidth() : image.getImageHeight();
+        float height = pi.rotate % 2 == 0 ? image.getImageHeight() : image.getImageWidth();
+
+        PageSize ps = new PageSize(width, height);
+        PdfPage page = pdf.addNewPage(ps);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        AffineTransform transform = new AffineTransform();
+        rotate(pi.rotate, transform, image);
+        if (pi.mirrorHorizontal) {
+            transform.scale(-1, 1);
+            transform.translate(-width, 0);
+        }
+        if (pi.mirrorVertical) {
+            transform.scale(1, -1);
+            transform.translate(0, -height);
+        }
+        canvas.concatMatrix(transform);
+        canvas.addImage(imgData, 0, 0, false);
+    }
+
+    public void close() throws Exception {
+        doc.close();
+        writer.flush();
+        writer.close();
+    }
+
+    private void rotate(int rotation, AffineTransform tr, Image image) {
+        switch (rotation) {
+        case 0:
+            break;
+        case 1:
+            tr.rotate(Math.PI * 3 / 2);
+            tr.translate(-image.getImageWidth(), 0);
+            break;
+        case 2:
+            tr.rotate(Math.PI);
+            tr.translate(-image.getImageWidth(), -image.getImageHeight());
+            break;
+        case 3:
+            tr.rotate(Math.PI / 2);
+            tr.translate(0, -image.getImageHeight());
+            break;
+        default:
+            throw new RuntimeException("rotation=" + rotation);
+        }
     }
 }

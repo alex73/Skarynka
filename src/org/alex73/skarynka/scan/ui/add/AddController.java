@@ -25,7 +25,6 @@ import org.alex73.skarynka.scan.process.PageFileInfo;
 import org.alex73.skarynka.scan.process.ProcessDaemon;
 import org.alex73.skarynka.scan.ui.book.PanelEditController;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.ArrayUtils;
 
 public class AddController {
     private static File currentDir = new File(Context.getBookDir());

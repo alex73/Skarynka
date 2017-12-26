@@ -34,13 +34,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ByteLookupTable;
+import java.awt.image.LookupOp;
 
 import org.alex73.skarynka.scan.Book2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Widget for display page with ability to proportional scale, crop, rotate, etc.
+ * Widget for display page with ability to proportional scale, crop, rotate,
+ * etc.
  * 
  * @author Aleś Bułojčyk <alex73mail@gmail.com>
  */
@@ -51,6 +54,7 @@ public class ImageViewPane extends Component {
     private volatile BufferedImage img;
     private volatile String pageNumber;
     private int rotation;
+    private boolean mirrorHorizontal, mirrorVertical, inverted;
     private boolean strikeout;
     double sourceAspectWidth = 1;
     double sourceAspectHeight = 1;
@@ -64,6 +68,21 @@ public class ImageViewPane extends Component {
 
     public void setRotation(int r) {
         this.rotation = r;
+        repaint();
+    }
+
+    public void setMirrorHorizontal(boolean mirrorHorizontal) {
+        this.mirrorHorizontal = mirrorHorizontal;
+        repaint();
+    }
+
+    public void setMirrorVertical(boolean mirrorVertical) {
+        this.mirrorVertical = mirrorVertical;
+        repaint();
+    }
+
+    public void setInverted(boolean inverted) {
+        this.inverted = inverted;
         repaint();
     }
 
@@ -100,7 +119,7 @@ public class ImageViewPane extends Component {
         Graphics2D g2 = (Graphics2D) g;
 
         // need to remember image locally because other thread can replace it
-        BufferedImage image = img;
+        BufferedImage image = inverted ? invert(img) : img;
         if (image != null) {
             paintImage(g2, image, sourceAspectWidth, sourceAspectHeight, rotation);
         }
@@ -124,7 +143,8 @@ public class ImageViewPane extends Component {
     }
 
     /**
-     * Draw image to center of panel with scale for maximaze with aspect ratio preserve.
+     * Draw image to center of panel with scale for maximaze with aspect ratio
+     * preserve.
      *
      * @param g2
      *            output graphics
@@ -136,13 +156,13 @@ public class ImageViewPane extends Component {
      *            source image height scale factor
      * @param rotation
      *            number of 90 gradus rotation clockwise, as for {see
-     *            java.awt.geom.AffineTransform#quadrantRotate(int numquadrants)}
+     *            java.awt.geom.AffineTransform#quadrantRotate(int
+     *            numquadrants)}
      */
-    private void paintImage(Graphics2D g2, BufferedImage img, double sourceScaleWidth,
-            double sourceScaleHeight, int rotation) {
+    private void paintImage(Graphics2D g2, BufferedImage img, double sourceScaleWidth, double sourceScaleHeight,
+            int rotation) {
 
-        transform = getAffineTransform(sourceScaleWidth, sourceScaleHeight, rotation, img, getWidth(),
-                getHeight());
+        transform = getAffineTransform(sourceScaleWidth, sourceScaleHeight, rotation, mirrorHorizontal, mirrorVertical, img, getWidth(), getHeight());
         imageSize = new Dimension(img.getWidth(), img.getHeight());
 
         // draw
@@ -157,8 +177,8 @@ public class ImageViewPane extends Component {
         }
     }
 
-    public static void drawCropRectangle(Graphics2D g2, BufferedImage image, Point2D.Double crop1,
-            Point2D.Double crop2, AffineTransform transform) {
+    public static void drawCropRectangle(Graphics2D g2, BufferedImage image, Point2D.Double crop1, Point2D.Double crop2,
+            AffineTransform transform) {
         try {
             double x1, y1, x2, y2;
             x1 = crop1.x * image.getWidth();
@@ -197,6 +217,16 @@ public class ImageViewPane extends Component {
         }
     }
 
+    public static BufferedImage invert(BufferedImage img) {
+        byte reverse[] = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            reverse[i] = (byte) (255 - i);
+        }
+        ByteLookupTable lookupTable = new ByteLookupTable(0, reverse);
+        LookupOp lop = new LookupOp(lookupTable, null);
+        return lop.filter(img, null);
+    }
+
     private void paintPageNumber(Graphics2D g2, String page) {
         Font font = new Font(Font.SERIF, Font.PLAIN, 120);
         int baseLine = font.getBaselineFor(page.charAt(0));
@@ -205,8 +235,8 @@ public class ImageViewPane extends Component {
         g2.drawString(page, Math.round((getWidth() - bounds.getWidth()) / 2), getHeight() - baseLine - 20);
     }
 
-    public static AffineTransform getAffineTransform(double sourceScaleWidth, double sourceScaleHeight,
-            int rotation, BufferedImage img, int outputWidth, int outputHeight) {
+    public static AffineTransform getAffineTransform(double sourceScaleWidth, double sourceScaleHeight, int rotation, boolean mirrorHorizontal, boolean mirrorVertical,
+            BufferedImage img, int outputWidth, int outputHeight) {
         if (sourceScaleWidth < 0.01 || sourceScaleWidth > 100) {
             throw new IllegalArgumentException("Wrong source scale width");
         }
@@ -217,7 +247,8 @@ public class ImageViewPane extends Component {
             throw new IllegalArgumentException("Wrong rotation");
         }
 
-        // define width and heigh for image with source scale factor and rotation
+        // define width and height for image with source scale factor and
+        // rotation
         double willWidth = 0, willHeight = 0;
         switch (rotation) {
         case 0:
@@ -247,6 +278,15 @@ public class ImageViewPane extends Component {
         at.quadrantRotate(rotation);
         at.scale(sourceScaleWidth * scaleForMaximizeInside, sourceScaleHeight * scaleForMaximizeInside);
         at.translate(-img.getWidth() / 2, -img.getHeight() / 2);
+
+        if (mirrorHorizontal) {
+            at.scale(-1, 1);
+            at.translate(-img.getWidth(), 0);
+        }
+        if (mirrorVertical) {
+            at.scale(1, -1);
+            at.translate(0, -img.getHeight());
+        }
         return at;
     }
 

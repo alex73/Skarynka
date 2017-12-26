@@ -34,6 +34,7 @@ import java.util.TreeMap;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -99,6 +100,14 @@ public class PagePopupMenu extends JPopupMenu {
         JMenuItem rotateRight = new JMenuItem(Messages.getString("PAGE_POPUP_ROTATE_RIGHT"));
         rotateRight.addActionListener(rotateRightAction);
 
+        JMenuItem mirrorHorizontal = new JMenuItem(Messages.getString("PAGE_POPUP_MIRROR_HORIZONTAL"));
+        mirrorHorizontal.addActionListener(mirrorHorizontalAction);
+        JMenuItem mirrorVertical = new JMenuItem(Messages.getString("PAGE_POPUP_MIRROR_VERTICAL"));
+        mirrorVertical.addActionListener(mirrorVerticalAction);
+
+        JMenuItem inverted = new JMenuItem(Messages.getString("PAGE_POPUP_INVERTED"));
+        inverted.addActionListener(invertedAction);
+
         JMenuItem rename = new JMenuItem(Messages.getString("PAGE_POPUP_RENAME"));
 
         rename.addActionListener(renameAction);
@@ -113,8 +122,13 @@ public class PagePopupMenu extends JPopupMenu {
         new MoveActionListener(true, 2, pb);
 
         add(editSelected);
+        add(new JSeparator());
         add(rotateLeft);
         add(rotateRight);
+        add(mirrorHorizontal);
+        add(mirrorVertical);
+        add(inverted);
+        add(new JSeparator());
         add(rename);
         add(m1);
         add(p1);
@@ -125,6 +139,7 @@ public class PagePopupMenu extends JPopupMenu {
         add(mb);
         add(pb);
         add(remove);
+        add(new JSeparator());
 
         for (Map.Entry<String, String> en : Context.getPageTags().entrySet()) {
             JMenuItem add = new JMenuItem(Messages.getString("PAGE_POPUP_ADD_TAG", en.getValue()));
@@ -185,7 +200,7 @@ public class PagePopupMenu extends JPopupMenu {
                 List<String> pagesList = book.listPages();
                 for (String p : pagesList) {
                     if (selectedPages.contains(p)) {
-                        PageFileInfo pfi=new PageFileInfo(book, p);
+                        PageFileInfo pfi = new PageFileInfo(book, p);
                         book.removePage(p);
                         File jpg = pfi.getPreviewFile();
                         File raw = pfi.getOriginalFile();
@@ -255,12 +270,12 @@ public class PagePopupMenu extends JPopupMenu {
                         dialog.statusLabel.setText(Messages.getString("PAGE_NUMBER_ERROR_WRONG"));
                         dialog.statusLabel.setForeground(Color.RED);
                     } else {
-                        String exist=null;
-                        String testNumber=newText;
-                        for(int i=0;i<selectedPages.size();i++) {
+                        String exist = null;
+                        String testNumber = newText;
+                        for (int i = 0; i < selectedPages.size(); i++) {
                             Book2.PageInfo pi = book.getPageInfo(testNumber);
-                            if (pi!=null) {
-                                exist=testNumber;
+                            if (pi != null) {
+                                exist = testNumber;
                                 break;
                             }
                             testNumber = Book2.incPage(testNumber, 1);
@@ -272,7 +287,8 @@ public class PagePopupMenu extends JPopupMenu {
                             dialog.statusLabel.setForeground(Color.RED);
                         } else {
                             dialog.renameButton.setEnabled(true);
-                            dialog.statusLabel.setText(Messages.getString("PAGE_NUMBER_RESULT",newText,Book2.incPage(testNumber, -1)));
+                            dialog.statusLabel.setText(
+                                    Messages.getString("PAGE_NUMBER_RESULT", newText, Book2.incPage(testNumber, -1)));
                             dialog.statusLabel.setForeground(Color.BLACK);
                         }
                     }
@@ -305,6 +321,39 @@ public class PagePopupMenu extends JPopupMenu {
             for (String p : selectedPages) {
                 PageInfo pi = book.getPageInfo(p);
                 pi.rotate = (pi.rotate + 1) % 4;
+                controller.updatePreview(p);
+            }
+        }
+    };
+    ActionListener mirrorHorizontalAction = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LOG.info("Mirror horizontal");
+            for (String p : selectedPages) {
+                PageInfo pi = book.getPageInfo(p);
+                pi.mirrorHorizontal = !pi.mirrorHorizontal;
+                controller.updatePreview(p);
+            }
+        }
+    };
+    ActionListener mirrorVerticalAction = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LOG.info("Mirror vertical");
+            for (String p : selectedPages) {
+                PageInfo pi = book.getPageInfo(p);
+                pi.mirrorVertical = !pi.mirrorVertical;
+                controller.updatePreview(p);
+            }
+        }
+    };
+    ActionListener invertedAction = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LOG.info("Inverted");
+            for (String p : selectedPages) {
+                PageInfo pi = book.getPageInfo(p);
+                pi.inverted = !pi.inverted;
                 controller.updatePreview(p);
             }
         }
@@ -348,7 +397,7 @@ public class PagePopupMenu extends JPopupMenu {
                     JOptionPane.showMessageDialog(null, "Error: " + ex.getClass() + " / " + ex.getMessage(), "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
-                newPage=Book2.incPage(newPage, 1);
+                newPage = Book2.incPage(newPage, 1);
             }
             controller.show();
         }
@@ -357,9 +406,10 @@ public class PagePopupMenu extends JPopupMenu {
     class TagActionListener implements ActionListener {
         private final String tag;
         private final boolean add;
+
         public TagActionListener(String tag, boolean add) {
-            this.tag=tag;
-            this.add=add;
+            this.tag = tag;
+            this.add = add;
         }
 
         @Override
@@ -411,7 +461,7 @@ public class PagePopupMenu extends JPopupMenu {
 
                 for (String p : pagesList) {
                     if (selectedPages.contains(p)) {
-                        PageFileInfo pfi=new PageFileInfo(book, p);
+                        PageFileInfo pfi = new PageFileInfo(book, p);
                         movedPageFiles.put(p, pfi);
                         File preview = pfi.getPreviewFile();
                         File orig = pfi.getOriginalFile();
@@ -440,12 +490,12 @@ public class PagePopupMenu extends JPopupMenu {
                 book.save();
 
                 for (String p : movedPages.keySet()) {
-                    PageFileInfo pfi=movedPageFiles.get(p);
+                    PageFileInfo pfi = movedPageFiles.get(p);
                     File tempPreview = new File(tempDir, pfi.getPreviewFile().getName());
                     File tempOrig = new File(tempDir, pfi.getOriginalFile().getName());
 
                     String newPage = Book2.incPagePos(p, letter, count);
-                    PageFileInfo pfo=new PageFileInfo(book, newPage);
+                    PageFileInfo pfo = new PageFileInfo(book, newPage);
 
                     File preview = pfo.getPreviewFile();
                     File orig = pfo.getOriginalFile();

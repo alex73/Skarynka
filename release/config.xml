@@ -10,6 +10,7 @@
         <param host="zhvir" id="book-dir">/data/Repo-MyShare-Temp/zhvir/books</param>
         <param host="zhvir" id="control-dir">/data/Repo-MyShare-Temp/zhvir/control</param>
         <param host="kosul" id="book-dir">books</param>
+        <param host="alex" id="book-dir">books</param>
         <!--param host="kosul" id="control-dir">c</param-->
 
         <!-- Camera's vendor:product USB IDs. Will not be checked if not defined. Need to declare for be sure that camera 
@@ -100,6 +101,15 @@
         <allow id="ShowDevices" value="false" />
         <allow id="ShowManualAdd" value="true" />
     </permissions>
+    <permissions host="alex">
+        <allow id="CameraBadPixels" value="false" />
+        <allow id="ProcessingBooks" value="true" />
+        <allow id="ProcessingControls" value="true" />
+        <allow id="ShowNonLocalBooks" value="true" />
+        <allow id="BookControl" value="true" />
+        <allow id="ShowDevices" value="false" />
+        <allow id="ShowManualAdd" value="true" />
+    </permissions>
 
     <page-tags>
         <!-- All possible tags for pages -->
@@ -110,6 +120,6 @@
     <process-commands>
         <!-- All possible tags for pages -->
         <command name="pdf" title="Канвэртаваць у pdf" />
-        <command name="pdfnocrop" title="Канвэртаваць у pdf без уліку crop" />
+        <command name="pdforig" title="Канвэртаваць у pdf зыходныя файлы" />
     </process-commands>
 </config>

@@ -60,7 +60,7 @@ public class PageFileInfo {
     }
 
     public File getPreviewFile() {
-        return new File(book.getBookDir(), "preview/"+page + ".jpg");
+        return new File(book.getBookDir(), "preview/" + page + ".jpg");
     }
 
     public File getOriginalFile() {
@@ -129,8 +129,7 @@ public class PageFileInfo {
         BufferedImage result = new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = result.createGraphics();
 
-        AffineTransform transform = ImageViewPane.getAffineTransform(1, 1, pi.rotate, img, maxWidth,
-                maxHeight);
+        AffineTransform transform = ImageViewPane.getAffineTransform(1, 1, pi.rotate, pi.mirrorHorizontal, pi.mirrorVertical, img, maxWidth, maxHeight);
 
         AffineTransform prev = g.getTransform();
         try {
@@ -149,6 +148,19 @@ public class PageFileInfo {
         ImageViewPane.drawCropRectangle(g, img, crop1, crop2, transform);
         g.dispose();
 
+        // if (pi.inverted) {
+        // for (int x = 0; x < result.getWidth(); x++) {
+        // for (int y = 0; y < result.getHeight(); y++) {
+        // int p = result.getRGB(x, y);
+        // p = -p - 1;
+        // result.setRGB(x, y, p & 0xFFFFFF);
+        // }
+        // }
+        // }
+
+        if (pi.inverted) {
+            result = ImageViewPane.invert(result);
+        }
         return result;
     }
 
@@ -156,7 +168,7 @@ public class PageFileInfo {
         BufferedImage result = new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = result.createGraphics();
 
-        AffineTransform transform = ImageViewPane.getAffineTransform(1, 1, 0, orig, maxWidth, maxHeight);
+        AffineTransform transform = ImageViewPane.getAffineTransform(1, 1, 0, false, false, orig, maxWidth, maxHeight);
 
         AffineTransform prev = g.getTransform();
         try {

@@ -22,6 +22,7 @@ import org.alex73.skarynka.scan.Book2.PageInfo;
 import org.alex73.skarynka.scan.IPagePreviewChanged;
 import org.alex73.skarynka.scan.ui.page.EditPageController;
 
+@SuppressWarnings("serial")
 public class PageComponent extends JLabel {
     private static final Border borderNone = BorderFactory.createLineBorder(new Color(0, 0, 0, 0));
     private static final Border borderFocused = BorderFactory.createLineBorder(Color.RED);
@@ -84,6 +85,9 @@ public class PageComponent extends JLabel {
                     PageInfo pi = controller.getBook().getPageInfo(getName());
                     Dimension fullImageSize = new Dimension(pi.imageSizeX, pi.imageSizeY);
                     controller.previewPage.setRotation(pi.rotate);
+                    controller.previewPage.setMirrorHorizontal(pi.mirrorHorizontal);
+                    controller.previewPage.setMirrorVertical(pi.mirrorVertical);
+                    controller.previewPage.setInverted(pi.inverted);
                     controller.previewPage.setCropRectangle(new Rectangle(pi.cropPosX, pi.cropPosY,
                             controller.getBook().cropSizeX, controller.getBook().cropSizeY), fullImageSize);
                     controller.panel.previewTags.setText(pi.tags.toString());

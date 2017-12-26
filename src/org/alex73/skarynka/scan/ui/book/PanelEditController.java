@@ -172,7 +172,6 @@ public class PanelEditController implements ITabController {
                     }
                     selection.setEnd(getPointIndex(p));
                     if (c != null) {
-                        System.out.println(c.getBounds());
                         ((JComponent)c.getParent()).scrollRectToVisible(c.getBounds());
                     }
                 }

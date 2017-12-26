@@ -149,3 +149,17 @@ function bookexist_pdfnocrop() {
 function bookexecute_pdfnocrop() {
   return bookexecute_pdf();
 }
+
+function exist_pdforig() {
+	return true;
+}
+function bookexist_pdforig() {
+	return bookexist_pdf();
+}
+function bookexecute_pdforig() {
+	var pdf = cmd.pdf2('../'+book.name+'.pdf');
+	for each (p in book.pages) {
+		pdf.addPage(book.book, p);
+	}
+	pdf.close();
+}

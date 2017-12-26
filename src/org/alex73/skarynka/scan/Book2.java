@@ -65,6 +65,7 @@ public class Book2 {
         public int cropPosX = -1, cropPosY = -1;
         public Set<String> tags = new TreeSet<>();
         public int rotate;
+        public boolean mirrorHorizontal, mirrorVertical, inverted;
         public String camera;
         public String pageOriginalFileExt;
 

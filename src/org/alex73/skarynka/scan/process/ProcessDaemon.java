@@ -282,6 +282,10 @@ public class ProcessDaemon extends Thread {
             this.book = book;
         }
 
+        public Book2 getBook() {
+            return book;
+        }
+
         public String getName() {
             return book.getName();
         }
@@ -371,8 +375,14 @@ public class ProcessDaemon extends Thread {
             Arrays.sort(jpegs);
             PdfCreator.create(outFile, jpegs);
         }
+
         public String getExecDir() {
             return new File(".").getAbsolutePath();
+        }
+
+        public PdfCreator pdf2(String bookOutPath) throws Exception {
+            File outFile = new File(book.getBookDir(), bookOutPath);
+            return new PdfCreator(outFile);
         }
     }
 
