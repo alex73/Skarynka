@@ -274,11 +274,11 @@ public class ImageViewPane extends Component {
 
         // create transformation
         AffineTransform at = new AffineTransform();
+
         at.translate(willWidth / 2 + offX, willHeight / 2 + offY);
         at.quadrantRotate(rotation);
         at.scale(sourceScaleWidth * scaleForMaximizeInside, sourceScaleHeight * scaleForMaximizeInside);
         at.translate(-img.getWidth() / 2, -img.getHeight() / 2);
-
         if (mirrorHorizontal) {
             at.scale(-1, 1);
             at.translate(-img.getWidth(), 0);

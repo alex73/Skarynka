@@ -87,17 +87,19 @@ public class PdfCreator {
         PdfPage page = pdf.addNewPage(ps);
 
         PdfCanvas canvas = new PdfCanvas(page);
-        AffineTransform transform = new AffineTransform();
-        rotate(pi.rotate, transform, image);
+
+        AffineTransform at = new AffineTransform();
+        rotate(pi.rotate, at, image);
         if (pi.mirrorHorizontal) {
-            transform.scale(-1, 1);
-            transform.translate(-width, 0);
+            at.scale(-1, 1);
+            at.translate(-image.getImageWidth(), 0);
         }
         if (pi.mirrorVertical) {
-            transform.scale(1, -1);
-            transform.translate(0, -height);
+            at.scale(1, -1);
+            at.translate(0, -image.getImageHeight());
         }
-        canvas.concatMatrix(transform);
+
+        canvas.concatMatrix(at);
         canvas.addImage(imgData, 0, 0, false);
     }
 
