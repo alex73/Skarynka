@@ -47,12 +47,12 @@ public class PdfCreator {
         Document doc = new Document(pdf);
 
         for (File jpeg : jpegs) {
-            ImageData imgData = ImageDataFactory.createJpeg(jpeg.toURI().toURL());
+            ImageData imgData = ImageDataFactory.create(jpeg.toURI().toURL());
             Image image = new Image(imgData);
             PageSize ps = new PageSize(image.getImageWidth(), image.getImageHeight());
             PdfPage page = pdf.addNewPage(ps);
             PdfCanvas canvas = new PdfCanvas(page);
-            canvas.addImage(imgData, 0, 0, true);
+            canvas.addImage(imgData, 0, 0, false);
 
         }
 

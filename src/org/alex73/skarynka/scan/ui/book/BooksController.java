@@ -362,7 +362,7 @@ public class BooksController implements ITabController {
         });
     }
 
-    static final Pattern RE_NAME = Pattern.compile("[A-Za-z0-9_\\-]+");
+    static final Pattern RE_NAME = Pattern.compile("[A-Za-z0-9_\\-\\.]+");
 
     DocumentFilter bookNameFilter = new DocumentFilter() {
 
