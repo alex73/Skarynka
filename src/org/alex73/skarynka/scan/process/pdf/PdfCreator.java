@@ -21,6 +21,8 @@
 package org.alex73.skarynka.scan.process.pdf;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.util.Arrays;
 
 import org.alex73.skarynka.scan.Book2;
 import org.alex73.skarynka.scan.Book2.PageInfo;
@@ -128,5 +130,17 @@ public class PdfCreator {
         default:
             throw new RuntimeException("rotation=" + rotation);
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        File[] jpegs = new File(args[0]).listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                return f.getName().toLowerCase().endsWith(".jpg");
+            }
+        });
+        Arrays.sort(jpegs);
+        create(new File(args[0], "out.pdf"), jpegs);
     }
 }
