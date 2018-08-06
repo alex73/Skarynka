@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -238,6 +239,9 @@ public class PagePopupMenu extends JPopupMenu {
         dialog.renameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (dialog.cbInversed.isSelected()) {
+                    result.append('-');
+                }
                 result.append(dialog.txtNumber.getText().trim());
                 dialog.dispose();
             }
@@ -363,12 +367,20 @@ public class PagePopupMenu extends JPopupMenu {
         @Override
         public void actionPerformed(ActionEvent e) {
             String newPage = showPageNumberDialog();
+            boolean inversed = false;
+            if (newPage.startsWith("-")) {
+                newPage = newPage.substring(1);
+                inversed = true;
+            }
             newPage = Book2.formatPageNumber(newPage);
             if (StringUtils.isEmpty(newPage)) {
                 return;
             }
-            for (int i = 0; i < selectedPages.size(); i++) {
-                String oldPage = selectedPages.get(i);
+            List<String> selected=new ArrayList<>(selectedPages);
+            if (inversed) {
+                Collections.reverse(selected);
+            }
+            for (String oldPage: selected) {
                 LOG.info("Rename page from " + oldPage + " to " + newPage);
                 try {
                     PageFileInfo pfi = new PageFileInfo(book, oldPage);

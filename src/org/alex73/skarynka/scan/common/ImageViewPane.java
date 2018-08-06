@@ -37,7 +37,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
 import java.awt.image.LookupOp;
 
-import org.alex73.skarynka.scan.Book2;
+import javax.swing.JComponent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author Aleś Bułojčyk <alex73mail@gmail.com>
  */
 @SuppressWarnings("serial")
-public class ImageViewPane extends Component {
+public class ImageViewPane extends JComponent {
     private static Logger LOG = LoggerFactory.getLogger(ImageViewPane.class);
 
     private volatile BufferedImage img;
@@ -111,7 +112,7 @@ public class ImageViewPane extends Component {
     }
 
     public void setPageNumber(String pageNumber) {
-        this.pageNumber = Book2.simplifyPageNumber(pageNumber);
+        this.pageNumber = pageNumber;
         repaint();
     }
 

@@ -240,8 +240,8 @@ public class ScanDialogController {
                     Messages.getString("ERROR_TITLE"), JOptionPane.ERROR_MESSAGE);
         }
 
-        dialog.liveLeft.setPageNumber(Book2.incPage(p1f, "".equals(p2f) ? 1 : 2));
-        dialog.liveRight.setPageNumber(Book2.incPage(p2f, 2));
+        dialog.liveLeft.setPageNumber(Book2.simplifyPageNumber(Book2.incPage(p1f, "".equals(p2f) ? 1 : 2)));
+        dialog.liveRight.setPageNumber(Book2.simplifyPageNumber(Book2.incPage(p2f, 2)));
     }
 
     void showStatus() {
@@ -279,7 +279,7 @@ public class ScanDialogController {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == '\n') { // ENTER
-                    live.setPageNumber(control.txtNumber.getText());
+                    live.setPageNumber(Book2.simplifyPageNumber(control.txtNumber.getText()));
                     control.txtNumber.setVisible(false);
                     control.btnNumber.requestFocus();
                     checkNumbers();

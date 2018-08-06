@@ -50,10 +50,10 @@ public class PageNumber extends javax.swing.JDialog {
         txtNumber = new javax.swing.JTextField();
         statusLabel = new javax.swing.JLabel();
         renameButton = new javax.swing.JButton();
+        cbInversed = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(Messages.getString("PAGE_NUMBER_TITLE")); // NOI18N
-        setPreferredSize(new java.awt.Dimension(333, 130));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText(Messages.getString("PAGE_NUMBER_PROMPT")); // NOI18N
@@ -74,7 +74,7 @@ public class PageNumber extends javax.swing.JDialog {
         statusLabel.setText(" error ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         getContentPane().add(statusLabel, gridBagConstraints);
@@ -82,10 +82,18 @@ public class PageNumber extends javax.swing.JDialog {
         renameButton.setText(Messages.getString("PAGE_NUMBER_BUTTON")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         getContentPane().add(renameButton, gridBagConstraints);
+
+        cbInversed.setText(Messages.getString("PAGE_NUMBER_INVERSED")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        getContentPane().add(cbInversed, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -133,6 +141,7 @@ public class PageNumber extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JCheckBox cbInversed;
     public javax.swing.JLabel jLabel1;
     public javax.swing.JButton renameButton;
     public javax.swing.JLabel statusLabel;
