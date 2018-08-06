@@ -178,6 +178,28 @@ public class ImageViewPane extends JComponent {
         }
     }
 
+    public Rectangle getImageCropRect() {
+        double x1, y1, x2, y2;
+        x1 = crop1.x * img.getWidth();
+        y1 = crop1.y * img.getHeight();
+        x2 = crop2.x * img.getWidth();
+        y2 = crop2.y * img.getHeight();
+        Point2D.Double p1 = new Point2D.Double();
+        Point2D.Double p2 = new Point2D.Double();
+        transform.transform(new Point2D.Double(x1, y1), p1);
+        transform.transform(new Point2D.Double(x2, y2), p2);
+        Rectangle2D.Double drawRect = new Rectangle2D.Double(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+        if (drawRect.width < 0) {
+            drawRect.width = -drawRect.width;
+            drawRect.x -= drawRect.width;
+        }
+        if (drawRect.height < 0) {
+            drawRect.height = -drawRect.height;
+            drawRect.y -= drawRect.height;
+        }
+        return drawRect.getBounds();
+    }
+
     public static void drawCropRectangle(Graphics2D g2, BufferedImage image, Point2D.Double crop1, Point2D.Double crop2,
             AffineTransform transform) {
         try {
