@@ -23,7 +23,6 @@ package org.alex73.skarynka.scan.common;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -36,6 +35,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
 import java.awt.image.LookupOp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 
@@ -61,7 +62,7 @@ public class ImageViewPane extends JComponent {
     double sourceAspectHeight = 1;
     private AffineTransform transform;
     private Dimension imageSize;
-    private Point2D.Double crop1, crop2;
+    private List<Rectangle2D.Double> crops = new ArrayList<>();
 
     public int getRotation() {
         return rotation;
@@ -132,8 +133,8 @@ public class ImageViewPane extends JComponent {
             g2.setColor(Color.RED);
             paintPageNumber(g2, p);
         }
-        if (crop1 != null && crop2 != null) {
-            drawCropRectangle(g2, img, crop1, crop2, transform);
+        for(Rectangle2D.Double crop:crops) {
+            drawCropRectangle(g2, img, crop, transform);
         }
         if (strikeout) {
             g2.setColor(Color.RED);
@@ -178,36 +179,14 @@ public class ImageViewPane extends JComponent {
         }
     }
 
-    public Rectangle getImageCropRect() {
-        double x1, y1, x2, y2;
-        x1 = crop1.x * img.getWidth();
-        y1 = crop1.y * img.getHeight();
-        x2 = crop2.x * img.getWidth();
-        y2 = crop2.y * img.getHeight();
-        Point2D.Double p1 = new Point2D.Double();
-        Point2D.Double p2 = new Point2D.Double();
-        transform.transform(new Point2D.Double(x1, y1), p1);
-        transform.transform(new Point2D.Double(x2, y2), p2);
-        Rectangle2D.Double drawRect = new Rectangle2D.Double(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
-        if (drawRect.width < 0) {
-            drawRect.width = -drawRect.width;
-            drawRect.x -= drawRect.width;
-        }
-        if (drawRect.height < 0) {
-            drawRect.height = -drawRect.height;
-            drawRect.y -= drawRect.height;
-        }
-        return drawRect.getBounds();
-    }
-
-    public static void drawCropRectangle(Graphics2D g2, BufferedImage image, Point2D.Double crop1, Point2D.Double crop2,
+    public static void drawCropRectangle(Graphics2D g2, BufferedImage image, Rectangle2D.Double crop,
             AffineTransform transform) {
         try {
             double x1, y1, x2, y2;
-            x1 = crop1.x * image.getWidth();
-            y1 = crop1.y * image.getHeight();
-            x2 = crop2.x * image.getWidth();
-            y2 = crop2.y * image.getHeight();
+            x1 = crop.getMinX() * image.getWidth();
+            y1 = crop.getMinY() * image.getHeight();
+            x2 = crop.getMaxX() * image.getWidth();
+            y2 = crop.getMaxY() * image.getHeight();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Crop rectangle in image pixels: " + x1 + "," + y1 + " - " + x2 + "," + y2);
             }
@@ -224,7 +203,7 @@ public class ImageViewPane extends JComponent {
                 drawRect.height = -drawRect.height;
                 drawRect.y -= drawRect.height;
             }
-            if (crop1.x < 0 || crop1.y < 0 || crop2.x > 1 || crop2.y > 1) {
+            if (crop.getMinX() < 0 || crop.getMinY() < 0 || crop.getMaxX() > 1 || crop.getMaxY() > 1) {
                 // out of real image
                 g2.setColor(Color.YELLOW);
             } else {
@@ -339,15 +318,41 @@ public class ImageViewPane extends JComponent {
         }
     }
 
-    public void setCropRectangle(Rectangle cropRectangle, Dimension fullImageSize) {
-        crop1 = new Point2D.Double();
-        crop2 = new Point2D.Double();
-        crop1.x = cropRectangle.getX() / fullImageSize.width;
-        crop1.y = cropRectangle.getY() / fullImageSize.height;
-        crop2.x = (cropRectangle.getX() + cropRectangle.getWidth()) / fullImageSize.width;
-        crop2.y = (cropRectangle.getY() + cropRectangle.getHeight()) / fullImageSize.height;
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Crop rectangle in 0..1: " + crop1 + " - " + crop2);
+    public List<Rectangle2D.Double> getCrops() {
+        return crops;
+    }
+
+    public Rectangle image2screen(Rectangle2D.Double crop) {
+        double x1, y1, x2, y2;
+        x1 = crop.getMinX() * img.getWidth();
+        y1 = crop.getMinY() * img.getHeight();
+        x2 = crop.getMaxX() * img.getWidth();
+        y2 = crop.getMaxY() * img.getHeight();
+        Point2D.Double p1 = new Point2D.Double();
+        Point2D.Double p2 = new Point2D.Double();
+        transform.transform(new Point2D.Double(x1, y1), p1);
+        transform.transform(new Point2D.Double(x2, y2), p2);
+        Rectangle2D.Double drawRect = new Rectangle2D.Double(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+        if (drawRect.width < 0) {
+            drawRect.width = -drawRect.width;
+            drawRect.x -= drawRect.width;
         }
+        if (drawRect.height < 0) {
+            drawRect.height = -drawRect.height;
+            drawRect.y -= drawRect.height;
+        }
+        return drawRect.getBounds();
+    }
+
+    public Rectangle2D.Double screen2image(Rectangle cropRectangle, Dimension fullImageSize) {
+        Rectangle2D.Double crop = new Rectangle2D.Double();
+        crop.x = cropRectangle.getX() / fullImageSize.width;
+        crop.y = cropRectangle.getY() / fullImageSize.height;
+        crop.width = (cropRectangle.getX() + cropRectangle.getWidth()) / fullImageSize.width - crop.x;
+        crop.height = (cropRectangle.getY() + cropRectangle.getHeight()) / fullImageSize.height - crop.y;
+        if (LOG.isTraceEnabled()) {
+            LOG.info("Crop rectangle in 0..1: " + crop);
+        }
+        return crop;
     }
 }

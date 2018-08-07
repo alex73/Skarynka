@@ -287,8 +287,9 @@ public class EditPageController {
         Book2.PageInfo pi = book.getPageInfo(page);
         pi.cropPosX += ddx;
         pi.cropPosY += ddy;
-        dialog.preview.setCropRectangle(new Rectangle(pi.cropPosX, pi.cropPosY, book.cropSizeX,
-                book.cropSizeY), fullImageSize);
+        dialog.preview.getCrops().clear();
+        dialog.preview.getCrops().add(dialog.preview
+                .screen2image(new Rectangle(pi.cropPosX, pi.cropPosY, book.cropSizeX, book.cropSizeY), fullImageSize));
         dialog.preview.repaint();
     }
 
@@ -317,8 +318,9 @@ public class EditPageController {
                 }
             }
             dialog.preview.setRotation(pi.rotate);
-            dialog.preview.setCropRectangle(new Rectangle(pi.cropPosX, pi.cropPosY,
-                    book.cropSizeX, book.cropSizeY), fullImageSize);
+            dialog.preview.getCrops().clear();
+            dialog.preview.getCrops().add(dialog.preview.screen2image(
+                    new Rectangle(pi.cropPosX, pi.cropPosY, book.cropSizeX, book.cropSizeY), fullImageSize));
             dialog.preview.displayImage(book.getImage(page), 1, 1);
             dialog.tags.setValues(pi.tags);
             dialog.errLabel.setText(" ");
@@ -442,7 +444,8 @@ public class EditPageController {
             rc.height = book.cropSizeY;
         }
 
-        dialog.preview.setCropRectangle(rc, fullImageSize);
+        dialog.preview.getCrops().clear();
+        dialog.preview.getCrops().add(dialog.preview.screen2image(rc, fullImageSize));
         if (LOG.isTraceEnabled()) {
             LOG.trace("Draw crop " + rc);
         }

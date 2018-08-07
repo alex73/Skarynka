@@ -26,6 +26,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
@@ -139,13 +140,12 @@ public class PageFileInfo {
             g.setTransform(prev);
         }
 
-        Point2D.Double crop1 = new Point2D.Double();
-        Point2D.Double crop2 = new Point2D.Double();
-        crop1.x = 1.0 * pi.cropPosX / pi.imageSizeX;
-        crop1.y = 1.0 * pi.cropPosY / pi.imageSizeY;
-        crop2.x = 1.0 * (pi.cropPosX + book.cropSizeX) / pi.imageSizeX;
-        crop2.y = 1.0 * (pi.cropPosY + book.cropSizeY) / pi.imageSizeY;
-        ImageViewPane.drawCropRectangle(g, img, crop1, crop2, transform);
+        Rectangle2D.Double crop = new Rectangle2D.Double();
+        crop.x = 1.0 * pi.cropPosX / pi.imageSizeX;
+        crop.y = 1.0 * pi.cropPosY / pi.imageSizeY;
+        crop.width = 1.0 * (pi.cropPosX + book.cropSizeX) / pi.imageSizeX - crop.x;
+        crop.height = 1.0 * (pi.cropPosY + book.cropSizeY) / pi.imageSizeY - crop.y;
+        ImageViewPane.drawCropRectangle(g, img, crop, transform);
         g.dispose();
 
         // if (pi.inverted) {
