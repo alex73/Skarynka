@@ -322,17 +322,13 @@ public class ImageViewPane extends JComponent {
         return crops;
     }
 
-    public Rectangle image2screen(Rectangle2D.Double crop) {
+    public Rectangle getImageRect(Rectangle2D.Double crop) {
         double x1, y1, x2, y2;
         x1 = crop.getMinX() * img.getWidth();
         y1 = crop.getMinY() * img.getHeight();
         x2 = crop.getMaxX() * img.getWidth();
         y2 = crop.getMaxY() * img.getHeight();
-        Point2D.Double p1 = new Point2D.Double();
-        Point2D.Double p2 = new Point2D.Double();
-        transform.transform(new Point2D.Double(x1, y1), p1);
-        transform.transform(new Point2D.Double(x2, y2), p2);
-        Rectangle2D.Double drawRect = new Rectangle2D.Double(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+        Rectangle2D.Double drawRect = new Rectangle2D.Double(x1, y1, x2 - x1, y2 - y1);
         if (drawRect.width < 0) {
             drawRect.width = -drawRect.width;
             drawRect.x -= drawRect.width;
