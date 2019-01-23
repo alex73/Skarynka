@@ -122,8 +122,8 @@ function exist_pdf() {
 }
 function execute_pdf() {
   var levels = page.tags.level_50_100 ? " -level 50%,100% ": "";
-  cmd.exec('${settings.path_convert} ${page.originalPageFile} -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY} '+rotate(page)+' '+scale(book)+levels+' -strip temp/${page.number}.tif');
-  cmd.exec('${settings.path_opj} -i temp/${page.number}.tif -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY} '+rotate(page)+' '+scale(book)+levels+' -strip temp/${page.number}.pnm');
+  cmd.exec('${settings.path_opj} -i temp/${page.number}.pnm -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
 }
 function bookexist_pdf() {
   return cmd.fileExist('../'+book.name+'.pdf');

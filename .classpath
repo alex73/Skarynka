@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/chdkptpJ"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -35,7 +34,5 @@
 	<classpathentry kind="lib" path="lib/itext7/io-7.1.0.jar" sourcepath="/data/src/itext7-7.1.0.zip"/>
 	<classpathentry kind="lib" path="lib/itext7/kernel-7.1.0.jar" sourcepath="/data/src/itext7-7.1.0.zip"/>
 	<classpathentry kind="lib" path="lib/itext7/layout-7.1.0.jar" sourcepath="/data/src/itext7-7.1.0.zip"/>
-	<classpathentry kind="lib" path="/home/alex/Downloads/bcpkix-jdk15on-1.59.jar"/>
-	<classpathentry kind="lib" path="/home/alex/Downloads/bcprov-jdk15on-1.59.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
