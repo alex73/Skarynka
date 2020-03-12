@@ -22,6 +22,10 @@ package org.alex73.skarynka.scan.process.pdf;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.alex73.skarynka.scan.Book2;
@@ -133,14 +137,32 @@ public class PdfCreator {
     }
 
     public static void main(String[] args) throws Exception {
-        File[] jpegs = new File(args[0]).listFiles(new FileFilter() {
+        Files.find(Paths.get("."), Integer.MAX_VALUE, (p, a) -> {
+            if (!a.isDirectory()) {
+                return false;
+            }
+            try {
+                boolean r = Files.list(p).filter(pj -> pj.toString().endsWith(".jpg")).findFirst().isPresent();
+                return r;
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }).forEach(p -> {
+            File[] jpegs = p.toFile().listFiles(new FileFilter() {
 
-            @Override
-            public boolean accept(File f) {
-                return f.getName().toLowerCase().endsWith(".jpg");
+                @Override
+                public boolean accept(File f) {
+                    return f.getName().toLowerCase().endsWith(".jpg");
+                }
+            });
+            Arrays.sort(jpegs);
+            try {
+                Path pdf = p.resolve("out.pdf");
+                System.out.println(pdf);
+                create(pdf.toFile(), jpegs);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
         });
-        Arrays.sort(jpegs);
-        create(new File(args[0], "out.pdf"), jpegs);
     }
 }
