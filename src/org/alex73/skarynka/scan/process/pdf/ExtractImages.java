@@ -17,7 +17,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 
 public class ExtractImages {
     public static final Path DIR = Paths.get(".");
-    public static final String OUT = "%04d%s.jpg";
+    public static final String OUT = "%06d%s.jpg";
     static int outp = 0;
 
     public static void main(String[] args) throws Exception {
@@ -26,7 +26,10 @@ public class ExtractImages {
     }
 
     static void process(Path p) {
+        outp = 0;
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(p.toFile()))) {
+            Path dir = Paths.get(p.toString().replaceAll("\\.pdf$", ""));
+            Files.createDirectories(dir);
             int prevp = 0;
             for (int i = 1; i <= pdfDoc.getNumberOfPages(); i++) {
                 final int ii = i;
@@ -49,7 +52,7 @@ public class ExtractImages {
                             ImageRenderInfo ri = (ImageRenderInfo) data;
                             byte[] image = ri.getImage().getImageBytes();
                             try {
-                                Path out = p.getParent().resolve(String.format(OUT, outp, suffix));
+                                Path out = dir.resolve(String.format(OUT, outp, suffix));
                                 Files.write(out, image);
                             } catch (IOException ex) {
                                 throw new RuntimeException(ex);

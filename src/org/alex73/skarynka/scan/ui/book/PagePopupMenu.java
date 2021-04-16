@@ -477,7 +477,7 @@ public class PagePopupMenu extends JPopupMenu {
                         movedPageFiles.put(p, pfi);
                         File preview = pfi.getPreviewFile();
                         File orig = pfi.getOriginalFile();
-                        File tempPreview = new File(tempDir, preview.getName());
+                        File tempPreview = new File(tempDir, "preview-" + preview.getName());
                         File tempOrig = new File(tempDir, orig.getName());
                         if (!preview.renameTo(tempPreview)) {
                             throw new Exception(Messages.getString("PAGE_POPUP_ERROR_MOVE", p));
@@ -503,7 +503,7 @@ public class PagePopupMenu extends JPopupMenu {
 
                 for (String p : movedPages.keySet()) {
                     PageFileInfo pfi = movedPageFiles.get(p);
-                    File tempPreview = new File(tempDir, pfi.getPreviewFile().getName());
+                    File tempPreview = new File(tempDir, "preview-" + pfi.getPreviewFile().getName());
                     File tempOrig = new File(tempDir, pfi.getOriginalFile().getName());
 
                     String newPage = Book2.incPagePos(p, letter, count);

@@ -149,7 +149,6 @@ public class PdfCreator {
             }
         }).forEach(p -> {
             File[] jpegs = p.toFile().listFiles(new FileFilter() {
-
                 @Override
                 public boolean accept(File f) {
                     return f.getName().toLowerCase().endsWith(".jpg");
@@ -157,7 +156,7 @@ public class PdfCreator {
             });
             Arrays.sort(jpegs);
             try {
-                Path pdf = p.resolve("out.pdf");
+                Path pdf = p.getParent().resolve(p.getFileName()+ ".pdf");
                 System.out.println(pdf);
                 create(pdf.toFile(), jpegs);
             } catch (Exception ex) {
