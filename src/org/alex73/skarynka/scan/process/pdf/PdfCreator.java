@@ -142,7 +142,7 @@ public class PdfCreator {
                 return false;
             }
             try {
-                boolean r = Files.list(p).filter(pj -> pj.toString().endsWith(".jpg")).findFirst().isPresent();
+                boolean r = Files.list(p).filter(pj -> pj.toString().toLowerCase().endsWith(".jpg")).findFirst().isPresent();
                 return r;
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
