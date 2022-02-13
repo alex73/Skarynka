@@ -147,7 +147,12 @@ public class PdfCreator {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-        }).forEach(p -> {
+        }).sorted().forEach(p -> {
+            Path pdf = p.getParent().resolve(p.getFileName()+ ".pdf");
+            if (Files.exists(pdf)) {
+                return;
+            }
+            Path temp = p.getParent().resolve(p.getFileName()+ ".pdf.temp");
             File[] jpegs = p.toFile().listFiles(new FileFilter() {
                 @Override
                 public boolean accept(File f) {
@@ -156,9 +161,9 @@ public class PdfCreator {
             });
             Arrays.sort(jpegs);
             try {
-                Path pdf = p.getParent().resolve(p.getFileName()+ ".pdf");
                 System.out.println(pdf);
-                create(pdf.toFile(), jpegs);
+                create(temp.toFile(), jpegs);
+                Files.move(temp, pdf);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
