@@ -59,7 +59,6 @@ public class PdfCreator {
             PdfPage page = pdf.addNewPage(ps);
             PdfCanvas canvas = new PdfCanvas(page);
             canvas.addImage(imgData, 0, 0, false);
-
         }
 
         doc.close();

@@ -19,7 +19,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 
 public class ExtractImages2 {
-    public static final Path DIR = Paths.get("/data/Repo-Archivy-IM/Archivy-IM-good/скан_е/");
+    public static final Path DIR = Paths.get("/home/alex/b/");
 
     public static void main(String[] args) throws Exception {
         Files.find(DIR, 10, (p, a) -> p.getFileName().toString().endsWith(".jpg")).sorted().forEach(p -> process(p));
