@@ -3,14 +3,10 @@ package org.alex73.skarynka.scan.ui.add;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.RootPaneContainer;
@@ -127,18 +123,8 @@ public class AddController {
                     throw new Exception("Error rename " + files[i] + " to " + fo + " !");
                 }
 
+                ProcessDaemon.updatePageSize(book, pages[i]);
                 Book2.PageInfo pi = book.new PageInfo(pages[i]);
-
-                try (ImageInputStream iis = ImageIO.createImageInputStream(fo)) {
-                    Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-                    if (!readers.hasNext()) {
-                        throw new Exception("Error read image file meta: " + fo.getAbsolutePath());
-                    }
-                    ImageReader rd = readers.next();
-                    rd.setInput(iis, true);
-                    pi.imageSizeX = rd.getWidth(0);
-                    pi.imageSizeY = rd.getHeight(0);
-                }
 
                 pi.pageOriginalFileExt = ext;
                 book.addPage(pi);

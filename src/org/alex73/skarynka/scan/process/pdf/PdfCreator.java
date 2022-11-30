@@ -58,7 +58,7 @@ public class PdfCreator {
             PageSize ps = new PageSize(image.getImageWidth(), image.getImageHeight());
             PdfPage page = pdf.addNewPage(ps);
             PdfCanvas canvas = new PdfCanvas(page);
-            canvas.addImage(imgData, 0, 0, false);
+            canvas.addImageAt(imgData, 0, 0, false);
         }
 
         doc.close();
@@ -105,7 +105,7 @@ public class PdfCreator {
         }
 
         canvas.concatMatrix(at);
-        canvas.addImage(imgData, 0, 0, false);
+        canvas.addImageAt(imgData, 0, 0, false);
     }
 
     public void close() throws Exception {
@@ -141,7 +141,7 @@ public class PdfCreator {
                 return false;
             }
             try {
-                boolean r = Files.list(p).filter(pj -> pj.toString().toLowerCase().endsWith(".jpg")).findFirst().isPresent();
+                boolean r = Files.list(p).filter(pj -> isJpeg(pj)).findFirst().isPresent();
                 return r;
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -155,7 +155,7 @@ public class PdfCreator {
             File[] jpegs = p.toFile().listFiles(new FileFilter() {
                 @Override
                 public boolean accept(File f) {
-                    return f.getName().toLowerCase().endsWith(".jpg");
+                    return isJpeg(f.toPath());
                 }
             });
             Arrays.sort(jpegs);
@@ -167,5 +167,10 @@ public class PdfCreator {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    static boolean isJpeg(Path f) {
+        String fn = f.getFileName().toString().toLowerCase();
+        return fn.endsWith(".jp2") || fn.endsWith(".jpg") || fn.endsWith(".jpeg");
     }
 }

@@ -26,12 +26,16 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.script.Bindings;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -480,10 +484,26 @@ public class ProcessDaemon extends Thread {
             }
             PageFileInfo pfi = new PageFileInfo(book, page);
             if (!pfi.getPreviewFile().exists()) {
+                updatePageSize(book, page);
                 previewScript.execPreview(book, page);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public static synchronized void updatePageSize(Book2 book, String page) throws Exception {
+        Book2.PageInfo pi = book.getPageInfo(page);
+        PageFileInfo pfi = new PageFileInfo(book, page);
+        try (ImageInputStream iis = ImageIO.createImageInputStream(pfi.getOriginalFile())) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            if (!readers.hasNext()) {
+                throw new Exception("Error read image file meta: " + pfi.getOriginalFile().getAbsolutePath());
+            }
+            ImageReader rd = readers.next();
+            rd.setInput(iis, true);
+            pi.imageSizeX = rd.getWidth(0);
+            pi.imageSizeY = rd.getHeight(0);
         }
     }
 }
