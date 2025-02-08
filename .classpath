@@ -2,13 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.9.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.4.jar"/>
@@ -30,9 +29,30 @@
 	<classpathentry kind="lib" path="lib/CHDK/usb4java-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/CHDK/usb4java-javax-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/itext7/io-7.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/itext7/kernel-7.2.3.jar" sourcepath="/data/src/itext7-7.2.3.zip"/>
-	<classpathentry kind="lib" path="lib/itext7/layout-7.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/itext7/commons-7.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/metadata-extractor-2.19.0.jar"/>
+	<classpathentry kind="lib" path="lib/xmpcore-6.1.11.jar"/>
+	<classpathentry kind="lib" path="lib/itext7/commons-7.2.6.jar"/>
+	<classpathentry kind="lib" path="lib/itext7/io-7.2.6.jar"/>
+	<classpathentry kind="lib" path="lib/itext7/kernel-7.2.6.jar" sourcepath="/data/src/kernel-7.2.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/itext7/layout-7.2.6.jar" sourcepath="/data/src/layout-7.2.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/istack-commons-runtime-3.0.12.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jakarta.activation-1.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jakarta.xml.bind-api-2.3.3.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jaxb-runtime-2.3.5.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/txw2-2.3.5.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/collections-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/icu4j-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/jniutils-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/js-language-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/nativebridge-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/nativeimage-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/polyglot-24.1.1.jar" sourcepath="/data/src/polyglot-24.1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/regex-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/truffle-api-24.1.1.jar" sourcepath="/data/src/truffle-api-24.1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/truffle-compiler-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/truffle-enterprise-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/truffle-runtime-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/word-24.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/GraalVM/js-scriptengine-24.1.1.jar" sourcepath="/data/src/js-scriptengine-24.1.1-sources.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

@@ -20,6 +20,7 @@
  **************************************************************************/
 package org.alex73.skarynka.scan.process.pdf;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -32,6 +33,10 @@ import org.alex73.skarynka.scan.Book2;
 import org.alex73.skarynka.scan.Book2.PageInfo;
 import org.alex73.skarynka.scan.process.PageFileInfo;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -54,16 +59,64 @@ public class PdfCreator {
 
         for (File jpeg : jpegs) {
             ImageData imgData = ImageDataFactory.create(jpeg.toURI().toURL());
-            Image image = new Image(imgData);
-            PageSize ps = new PageSize(image.getImageWidth(), image.getImageHeight());
-            PdfPage page = pdf.addNewPage(ps);
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas.addImageAt(imgData, 0, 0, false);
+
+//            Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(imgData.getData()));
+//            ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+//            int orientation = 0;
+//            try {
+//                if (exifIFD0Directory != null) {
+//                    orientation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+//                }
+//            } catch (MetadataException ex) {
+//            }
+
+            addPage(imgData, 0/*orientation*/, jpeg, pdf);
         }
 
         doc.close();
         writer.flush();
         writer.close();
+    }
+
+    private static void addPage(ImageData imgData, int orientation, File file, PdfDocument pdf) {
+        Image image = new Image(imgData);
+        float width, height;
+        AffineTransform at=null;
+        switch (orientation) {
+        case 0:
+        case 1:
+            width = image.getImageWidth();
+            height = image.getImageHeight();
+            break;
+        case 3:
+            width = image.getImageWidth();
+            height = image.getImageHeight();
+            at = new AffineTransform();
+            rotate(2, at, image);
+            break;
+        case 6:
+            width = image.getImageHeight();
+            height = image.getImageWidth();
+            at = new AffineTransform();
+            rotate(1, at, image);
+            break;
+        case 8:
+            width = image.getImageHeight();
+            height = image.getImageWidth();
+            at = new AffineTransform();
+            rotate(3, at, image);
+            break;
+        default:
+            throw new RuntimeException("Wrong orientation for " + file.getAbsolutePath() + ": " + orientation);
+        }
+        PageSize ps = new PageSize(width, height);
+        PdfPage page = pdf.addNewPage(ps);
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        if (at != null) {
+            canvas.concatMatrix(at);
+        }
+        canvas.addImageAt(imgData, 0, 0, false);
     }
 
     private final PdfWriter writer;
@@ -114,7 +167,7 @@ public class PdfCreator {
         writer.close();
     }
 
-    private void rotate(int rotation, AffineTransform tr, Image image) {
+    private static void rotate(int rotation, AffineTransform tr, Image image) {
         switch (rotation) {
         case 0:
             break;

@@ -39,6 +39,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.script.Bindings;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
@@ -48,6 +49,7 @@ import org.alex73.skarynka.scan.process.pdf.PdfCreator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.graalvm.polyglot.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -357,6 +359,7 @@ public class ProcessDaemon extends Thread {
                 throw new Exception("Unknown OS");
             }
             LOG.debug("Execute for book " + book.getName() + ": " + cmdo);
+            System.out.println("Execute: " + cmdo);
             Process process = Runtime.getRuntime().exec(cmda, null, book.getBookDir());
             int r = process.waitFor();
             LOG.debug("Execution result: " + r);
@@ -410,12 +413,14 @@ public class ProcessDaemon extends Thread {
         }
 
         public void compilePreview() throws Exception {
-            engine = new ScriptEngineManager().getEngineByName("nashorn");
+            engine = new ScriptEngineManager().getEngineByName("js");
+            Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
+            bindings.put("polyglot.js.allowHostAccess", true);
             csPreview = ((Compilable) engine).compile(script + "\n command_preview();");
         }
 
         public void execPreview(Book2 book, String page) throws Exception {
-            Bindings bindings = engine.createBindings();
+           Bindings bindings = engine.createBindings();
             bindings.put("settings", Context.getSettings());
             bindings.put("page", new PageContext(book, page));
             bindings.put("book", new BookContext(book));
@@ -424,7 +429,9 @@ public class ProcessDaemon extends Thread {
         }
 
         public void compile() throws Exception {
-            engine = new ScriptEngineManager().getEngineByName("nashorn");
+            engine = new ScriptEngineManager().getEngineByName("js");
+            Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
+            bindings.put("polyglot.js.allowHostAccess", true);
             csPageResultExists = ((Compilable) engine).compile(script + "\n exist_" + command + "();");
             csPageExecute = ((Compilable) engine).compile(script + "\n execute_" + command + "();");
             csBookResultExists = ((Compilable) engine).compile(script + "\n bookexist_" + command + "();");

@@ -2,7 +2,7 @@
  * Common functions
  */
 function rotate(page) {
-  switch (page.rotate) {
+  switch (page.getRotate()) {
     case 0:
       return '';
     case 1:
@@ -12,39 +12,39 @@ function rotate(page) {
     case 3:
       return '-rotate 270';
     default:
-      throw "Unknown rotate: " + page.rotate;
+      throw "Unknown rotate: " + page.getRotate();
   }
 }
 function scale(book) {
   if (book.scale != 0) {
-    return '-adaptive-resize '+book.scale + '%';
+    return '-adaptive-resize '+book.getScale() + '%';
   } else {
     return '';
   }
 }
 function dcrawc(page) {
-  return page.tags.color ? '' : '-d';
+  return page.getTags().color ? '' : '-d';
 }
 function dpi(book) {
   return '-dpi '+Math.round(book.dpi*book.scale/100);
 }
 
 function command_preview() {
-  cmd.exec('${settings.path_convert} ${page.originalPageFile} -scale ${settings.preview_size}x${settings.preview_size} preview/${page.number}.jpg');
+  cmd.exec('${settings.path_convert} ${page.getOriginalPageFile()} -scale ${settings.preview_size}x${settings.preview_size} preview/${page.getNumber()}.jpg');
 }
 
 /*
  * 'edit' processing
  */
 function exist_edit() {
-  if (page.tags.foredit) {
-    return cmd.fileExist(page.number+'-edit.png');
+  if (page.getTags().foredit) {
+    return cmd.fileExist(page.getNumber()+'-edit.png');
   } else {
     return true;
   }
 }
 function execute_edit() {
-  if (page.tags.foredit) {
+  if (page.getTags().foredit) {
     cmd.exec('${settings.path_dcraw} ${settings.dcraw_params} -P ../${page.camera}.bad -c ${page.number}.raw | '+
              '${settings.path_convert} - -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY} '+rotate(page)+' '+scale(book)+' -strip ${page.number}-edit.png');
   }
@@ -57,7 +57,7 @@ function bookexist_edit() {
  * 'djvu' processing
  */
 function exist_djvu() {
-  return cmd.fileExist(page.number+'.djvu');
+  return cmd.fileExist(page.getNumber()+'.djvu');
 }
 function execute_djvu() {
   if (page.tags.foredit) {
@@ -83,10 +83,10 @@ function bookexecute_djvu() {
  * 'jp2' processing
  */
 function exist_jp2() {
-  return cmd.fileExist(page.number+'.jp2');
+  return cmd.fileExist(page.getNumber()+'.jp2');
 }
 function execute_jp2() {
-  if (page.tags.foredit) {
+  if (page.getTags().foredit) {
     cmd.exec('${settings.path_convert} ${page.number}-edit.png -quality 75 ${page.number}.jp2');
   } else {
     cmd.exec('${settings.path_dcraw} ${settings.dcraw_params} -P ../${page.camera}.bad -c ${page.number}.raw | '+
@@ -118,20 +118,20 @@ function bookexecute_jpegoverview() {
 }
 
 function exist_pdf() {
-  return cmd.fileExist('temp/'+page.number+'.jp2');
+  return cmd.fileExist('temp/'+page.getNumber()+'.jp2');
 }
 function execute_pdf() {
-  var levels = page.tags.level_50_100 ? " -level 50%,100% ": "";
-  cmd.exec('${settings.path_convert} ${page.originalPageFile} -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY} '+rotate(page)+' '+scale(book)+levels+' -strip temp/${page.number}.pnm');
+  var levels = /*page.getTags().level_50_100 ?*/ " -level 20%,90% "/* : ""*/;
+  cmd.exec('${settings.path_convert} ${page.originalPageFile}  '+rotate(page)+' '+scale(book)+levels+' -strip temp/${page.number}.pnm'); // -crop ${book.cropSizeX}x${book.cropSizeY}+${page.cropPosX}+${page.cropPosY}
   cmd.exec('${settings.path_opj} -i temp/${page.number}.pnm -q ${settings.jp2_quality} -o temp/${page.number}.jp2');
 }
 function bookexist_pdf() {
-  return cmd.fileExist('../'+book.name+'.pdf');
+  return cmd.fileExist('../'+book.getName()+'.pdf');
 }
 function bookexecute_pdf() {
-  cmd.pdf('../'+book.name+'.pdf', 'temp/', 'jp2');
-  for(p in book.pages) {
-    cmd.fileRemove(book.pages[p]+'.jp2');
+  cmd.pdf('../'+book.getName()+'.pdf', 'temp/', 'jp2');
+  for(p in book.getPages()) {
+    cmd.fileRemove(book.getPages()[p]+'.jp2');
   }
 }
 
@@ -158,7 +158,7 @@ function bookexist_pdforig() {
 }
 function bookexecute_pdforig() {
 	var pdf = cmd.pdf2('../'+book.name+'.pdf');
-	for each (p in book.pages) {
+	for (const p of book.pages) {
 		pdf.addPage(book.book, p);
 	}
 	pdf.close();

@@ -20,6 +20,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 
 public class ExtractImages2 {
     public static final Path DIR = Paths.get("/home/alex/b/");
+    public static final Path OUT_DIR = Paths.get("/home/alex/b/out/");
 
     public static void main(String[] args) throws Exception {
         Files.find(DIR, 10, (p, a) -> p.getFileName().toString().endsWith(".jpg")).sorted().forEach(p -> process(p));
@@ -64,12 +65,13 @@ public class ExtractImages2 {
             fn = m.group(3);
             page = null;
         } else {
-            throw new RuntimeException(p);
+            dir = p.replaceAll("\\.[a-z]+$", "");
+            fn = dir;
         }
         if (!fn.startsWith(dir)) {
             throw new RuntimeException(p);
         }
-        outDir = Paths.get("/data/tmp/2/" + fn);
+        outDir = OUT_DIR.resolve(fn);
         if (page == null) {
             if (Files.isDirectory(outDir)) {
                 System.out.println("Already exist: " + outDir);

@@ -123,11 +123,10 @@ public class AddController {
                     throw new Exception("Error rename " + files[i] + " to " + fo + " !");
                 }
 
-                ProcessDaemon.updatePageSize(book, pages[i]);
                 Book2.PageInfo pi = book.new PageInfo(pages[i]);
-
                 pi.pageOriginalFileExt = ext;
                 book.addPage(pi);
+                ProcessDaemon.updatePageSize(book, pages[i]);
                 ProcessDaemon.createPreviewIfNeed(book, pages[i]);
                 dialog.progress.setValue(i + 1);
                 book.save();
