@@ -30,7 +30,7 @@ function dpi(book) {
 }
 
 function command_preview() {
-  cmd.exec('${settings.path_convert} ${page.getOriginalPageFile()} -scale ${settings.preview_size}x${settings.preview_size} preview/${page.getNumber()}.jpg');
+  cmd.exec('${settings.path_convert} ${page.originalPageFile} -scale ${settings.preview_size}x${settings.preview_size} preview/${page.number}.jpg');
 }
 
 /*
@@ -157,9 +157,9 @@ function bookexist_pdforig() {
 	return bookexist_pdf();
 }
 function bookexecute_pdforig() {
-	var pdf = cmd.pdf2('../'+book.name+'.pdf');
-	for (const p of book.pages) {
-		pdf.addPage(book.book, p);
+	var pdf = cmd.pdf2('../'+book.getName()+'.pdf');
+	for (const p of book.getPages()) {
+		pdf.addPage(book.getBook(), p);
 	}
 	pdf.close();
 }
