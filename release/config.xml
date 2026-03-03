@@ -120,6 +120,7 @@
     <process-commands>
         <!-- All possible tags for pages -->
         <command name="pdf" title="Канвэртаваць у pdf" />
+        <command name="pdfnocrop" title="Канвэртаваць у pdf без crop" />
         <command name="pdforig" title="Канвэртаваць у pdf зыходныя файлы" />
     </process-commands>
 </config>

@@ -60,17 +60,20 @@ public class PdfCreator {
         for (File jpeg : jpegs) {
             ImageData imgData = ImageDataFactory.create(jpeg.toURI().toURL());
 
-//            Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(imgData.getData()));
-//            ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-//            int orientation = 0;
-//            try {
-//                if (exifIFD0Directory != null) {
-//                    orientation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-//                }
-//            } catch (MetadataException ex) {
-//            }
+            int orientation = 0;
+            if (!jpeg.toString().endsWith(".jp2")) {
+                Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(imgData.getData()));
+                ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+                try {
+                    if (exifIFD0Directory != null) {
+                        orientation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+                    }
+                } catch (MetadataException ex) {
+                }
+                //orientation = 6;
+            }
 
-            addPage(imgData, 0/*orientation*/, jpeg, pdf);
+            addPage(imgData, orientation, jpeg, pdf);
         }
 
         doc.close();
